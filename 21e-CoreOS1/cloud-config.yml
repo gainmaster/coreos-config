@@ -29,7 +29,7 @@ coreos:
         Address=158.38.57.117/24
         Gateway=158.38.57.1
 
-      - name: 00-private.network
+    - name: 00-private.network
       runtime: true
       content: |
         [Match]

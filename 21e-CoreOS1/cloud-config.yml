@@ -17,7 +17,7 @@ coreos:
       command: start
     - name: fleet.service
       command: start
-    - name: 00-public.network
+    - name: public.network
       runtime: true
       content: |
         [Match]
@@ -29,7 +29,7 @@ coreos:
         Address=158.38.57.117/24
         Gateway=158.38.57.1
 
-    - name: 00-private.network
+    - name: private.network
       runtime: true
       content: |
         [Match]

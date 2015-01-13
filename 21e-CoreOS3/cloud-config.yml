@@ -4,9 +4,9 @@ coreos:
   etcd:
     name: 21e-CoreOS3
     # generate a new token for each unique cluster from https://discovery.etcd.io/new
-    discovery: https://discovery.etcd.io/b2f0cbace94454ced8c52ac6094fab5d
+    discovery: https://discovery.etcd.io/a6b319272f785beda6b7eb4ede447ba1
     addr: 158.38.57.119:4001
-    peer-addr: 10.0.0.100:7001
+    peer-addr: 10.0.0.102:7001
   fleet:
     public-ip: 158.38.57.119
   update:

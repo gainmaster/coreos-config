@@ -4,7 +4,7 @@ coreos:
   etcd:
     name: 21e-CoreOS1
     # generate a new token for each unique cluster from https://discovery.etcd.io/new
-    discovery: https://discovery.etcd.io/cb19c2a5397cb48dd8e4520732e47fa5
+    discovery: https://discovery.etcd.io/b2f0cbace94454ced8c52ac6094fab5d
     addr: 158.38.57.117:4001
     peer-addr: 10.0.0.100:7001
   fleet:
@@ -17,24 +17,6 @@ coreos:
       command: start
     - name: fleet.service
       command: start
-    - name: public.network
-      content: |
-        [Match]
-        MACAddress=00:50:56:bb:2e:52
-
-        [Network]
-        Address=158.38.57.117/24
-        Gateway=158.38.57.1
-        DNS=158.38.50.10
-        DNS=158.38.49.10
-
-    - name: private.network
-      content: |
-        [Match]
-        MACAddress=00:50:56:bb:43:75
-
-        [Network]
-        Address=10.0.0.100/24
 
 hostname: 21e-CoreOS1
 
@@ -59,3 +41,27 @@ users:
     groups:
       - sudo
       - docker
+
+write_files:
+  - path: /etc/systemd/network/public.network
+    permissions: 0644
+    owner: root
+    content: |
+      [Match]
+      MACAddress=00:50:56:bb:2e:52
+
+      [Network]
+      Address=158.38.57.117/24
+      Gateway=158.38.57.1
+      DNS=158.38.50.10
+      DNS=158.38.49.10
+
+  - path: /etc/systemd/network/private.network
+    permissions: 0644
+    owner: root
+    content: |
+      [Match]
+      MACAddress=00:50:56:bb:43:75
+
+      [Network]
+      Address=10.0.0.100/24

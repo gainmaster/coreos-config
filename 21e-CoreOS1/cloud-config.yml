@@ -18,7 +18,6 @@ coreos:
     - name: fleet.service
       command: start
     - name: public.network
-      runtime: true
       content: |
         [Match]
         MACAddress=00:50:56:bb:2e:52
@@ -30,7 +29,6 @@ coreos:
         DNS=158.38.49.10
 
     - name: private.network
-      runtime: true
       content: |
         [Match]
         MACAddress=00:50:56:bb:43:75

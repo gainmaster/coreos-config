@@ -64,4 +64,4 @@ write_files:
       MACAddress=00:50:56:bb:42:ed
 
       [Network]
-      Address=10.0.0.103/24
+      Address=10.0.0.102/24

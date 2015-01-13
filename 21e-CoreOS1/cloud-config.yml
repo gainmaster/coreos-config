@@ -24,11 +24,10 @@ coreos:
         MACAddress=00:50:56:bb:2e:52
 
         [Network]
-        DHCP=none
-        DNS=158.38.50.10
-        DNS=158.38.49.10
         Address=158.38.57.117/24
         Gateway=158.38.57.1
+        DNS=158.38.50.10
+        DNS=158.38.49.10
 
     - name: private.network
       runtime: true

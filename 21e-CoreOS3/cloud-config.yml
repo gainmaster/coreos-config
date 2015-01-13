@@ -1,0 +1,67 @@
+#cloud-config
+
+coreos:
+  etcd:
+    name: 21e-CoreOS3
+    # generate a new token for each unique cluster from https://discovery.etcd.io/new
+    discovery: https://discovery.etcd.io/b2f0cbace94454ced8c52ac6094fab5d
+    addr: 158.38.57.119:4001
+    peer-addr: 10.0.0.100:7001
+  fleet:
+    public-ip: 158.38.57.119
+  update:
+    reboot-strategy: etcd-lock
+    group: stable
+  units:
+    - name: etcd.service
+      command: start
+    - name: fleet.service
+      command: start
+
+hostname: 21e-CoreOS3
+
+users:
+  - name: tony
+    gecos: Tony Hesjevik
+    coreos-ssh-import-github: feskehau
+    groups:
+      - sudo
+      - docker
+
+  - name: andreas
+    gecos: Andreas Hopen
+    coreos-ssh-import-github: hopeeen
+    groups:
+      - sudo
+      - docker
+
+  - name: knut
+    gecos: Knut Lorvik
+    coreos-ssh-import-github: superlorre
+    groups:
+      - sudo
+      - docker
+
+write_files:
+  - path: /etc/systemd/network/public.network
+    permissions: 0644
+    owner: root
+    content: |
+      [Match]
+      MACAddress=00:50:56:bb:5b:6e
+
+      [Network]
+      Address=158.38.57.119/24
+      Gateway=158.38.57.1
+      DNS=158.38.50.10
+      DNS=158.38.49.10
+
+  - path: /etc/systemd/network/private.network
+    permissions: 0644
+    owner: root
+    content: |
+      [Match]
+      MACAddress=00:50:56:bb:42:ed
+
+      [Network]
+      Address=10.0.0.103/24

@@ -1,0 +1,36 @@
+[Unit]
+Description=Jenkins CI Worker Service on port %i
+
+# Requirements
+Requires=etcd.service
+Requires=docker.service
+Requires=jenkins-discovery@%i.service
+
+# Dependency ordering
+After=etcd.service
+After=docker.service
+Before=jenkins-discovery@%i.service
+
+[Service]
+TimeoutStartSec=0
+KillMode=none
+
+EnvironmentFile=/etc/systemd/network/environment
+
+# Pre-Start
+## Directives with "=-" are allowed to fail without consequence
+ExecStartPre=-/usr/bin/docker kill jenkins-worker.%i
+ExecStartPre=-/usr/bin/docker rm jenkins.%i
+ExecStartPre=/usr/bin/docker pull bachelorthessis/jenkins
+
+# Start
+## USE PRIVATE IP!
+ExecStart=/usr/bin/docker run -rm --name jenkins.%i -p ${PRIVATE_IPV4}:%i:8080 \
+bachelorthesis/jenkins "/usr/sbin/java -jar /usr/share/java/jenkins/jenkins.war"
+
+# Stop
+ExecStop=/usr/bin/docker stop apache.%i
+
+[X-Fleet]
+# Don't schedule on the same machine as other Jenkins instances
+Conflicts=jenkins@*.service

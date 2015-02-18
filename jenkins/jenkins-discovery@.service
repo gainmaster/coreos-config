@@ -1,0 +1,7 @@
+[Unit]
+Description=Jenkins CI Discovery Service on port %i
+
+[Service]
+# Let processes take awhile to start up (for first run Docker containers)
+TimeoutStartSec=0
+

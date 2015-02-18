@@ -1,7 +1,34 @@
 [Unit]
 Description=Jenkins CI Discovery Service on port %i
 
-[Service]
-# Let processes take awhile to start up (for first run Docker containers)
-TimeoutStartSec=0
+# Requirements
+Requires=etcd.service
+Requires=jenkins@%i.service
 
+# Dependency ordering and binding
+After=etcd.service
+After=jenkins@%i.service
+BindsTo=jenkins@%i.service
+
+[Service]
+# Get network environmental variables
+EnvironmentFile=/etc/systemd/network/environment
+
+# Start
+ExecStart=/bin/bash -c '\
+  while true; do \
+    curl -f ${PRIVATE_IPV4}:%i;
+    if [ $? -eq 0 ]; then \
+      etcdctl set /services/jenkins/${PRIVATE_IPV4} \'{"host": "%H", "ipv4_addr": ${PRIVATE_IPV4}, "port": %i}\' --ttl 30; \
+    else \
+      etcdctl rm /services/jenkins/${PRIVATE_IPV4}; \
+    fi; \
+    sleep 20;
+  done'
+
+# Stop
+ExecStop=/usr/bin/etcdctl rm /services/jenkins/${PRIVATE_IPV4}
+
+[X-Fleet]
+# Schedule on the same machine as the associated Apache service
+ConditionMachineOf=jenkins@%i.service

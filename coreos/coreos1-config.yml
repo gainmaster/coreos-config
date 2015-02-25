@@ -8,7 +8,7 @@ coreos:
     addr: 10.0.0.100:4001       # For client communication
     peer-addr: 10.0.0.100:7001  # For server communication
   fleet:
-    public-ip: 158.38.57.117
+    public-ip: 10.0.0.100
   update:
     reboot-strategy: etcd-lock
     group: stable

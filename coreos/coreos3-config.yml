@@ -2,13 +2,13 @@
 
 coreos:
   etcd:
-    name: 21e-CoreOS2
+    name: coreos3
     # generate a new token for each unique cluster from https://discovery.etcd.io/new
     discovery: https://discovery.etcd.io/a6b319272f785beda6b7eb4ede447ba1
-    addr: 158.38.57.118:4001
-    peer-addr: 10.0.0.101:7001
+    addr: 10.0.0.102:4001       # For client communication
+    peer-addr: 10.0.0.102:7001  # For server communication
   fleet:
-    public-ip: 158.38.57.118
+    public-ip: 10.0.0.102
   update:
     reboot-strategy: etcd-lock
     group: stable
@@ -18,7 +18,7 @@ coreos:
     - name: fleet.service
       command: start
 
-hostname: 21e-CoreOS2
+hostname: coreos3
 
 users:
   - name: tony
@@ -48,10 +48,10 @@ write_files:
     owner: root
     content: |
       [Match]
-      MACAddress=00:50:56:bb:4c:30
+      MACAddress=00:50:56:bb:5b:6e
 
       [Network]
-      Address=158.38.57.118/24
+      Address=158.38.57.119/24
       Gateway=158.38.57.1
       DNS=158.38.50.10
       DNS=158.38.49.10
@@ -61,8 +61,13 @@ write_files:
     owner: root
     content: |
       [Match]
-      MACAddress=00:50:56:bb:76:3a
+      MACAddress=00:50:56:bb:42:ed
 
       [Network]
-      Address=10.0.0.101/24
-      
+      Address=10.0.0.102/24
+
+  - path: /etc/metadata
+    permissions: 0644
+    content: |
+      PUBLIC_IPV4=158.38.57.119
+      PRIVATE_IPV4=10.0.0.102

@@ -12,14 +12,14 @@ Before=jenkins-discovery@%i.service
 [Service]
 TimeoutStartSec=0
 KillMode=none
-EnvironmentFile=/etc/systemd/network/environment
+EnvironmentFile=/etc/environment
 
 ExecStartPre=-/usr/bin/docker kill jenkins-worker.%i
 ExecStartPre=-/usr/bin/docker rm jenkins.%i
-ExecStartPre=/usr/bin/docker pull bachelorthessis/jenkins
+ExecStartPre=/usr/bin/docker pull bachelorthesis/jenkins
 
 ExecStart=/usr/bin/docker run -rm --name jenkins.%i -p ${PRIVATE_IPV4}:%i:8080 \
-bachelorthesis/jenkins "/usr/sbin/java -jar /usr/share/java/jenkins/jenkins.war"
+bachelorthesis/jenkins /usr/sbin/java -jar /usr/share/java/jenkins/jenkins.war
 
 ExecStop=/usr/bin/docker stop jenkins.%i
 

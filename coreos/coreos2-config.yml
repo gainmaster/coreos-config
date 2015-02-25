@@ -4,7 +4,7 @@ coreos:
   etcd:
     name: coreos2
     # generate a new token for each unique cluster from https://discovery.etcd.io/new
-    discovery: https://discovery.etcd.io/07f8a886e7f056aeb9304fc508e19767
+    discovery: https://discovery.etcd.io/c454dc1f03df2f11ee617b0c7aaacc2e
     addr: 10.0.0.101:4001       # For client communication
     peer-addr: 10.0.0.101:7001  # For server communication
   fleet:

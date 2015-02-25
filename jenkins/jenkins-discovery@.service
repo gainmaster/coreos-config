@@ -9,7 +9,7 @@ After=jenkins@%i.service
 BindsTo=jenkins@%i.service
 
 [Service]
-EnvironmentFile=/etc/environment
+EnvironmentFile=/etc/metadata
 
 ExecStart=/bin/bash -c '\
   while true; do \

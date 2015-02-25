@@ -12,7 +12,7 @@ Before=jenkins-discovery@%i.service
 [Service]
 TimeoutStartSec=0
 KillMode=none
-EnvironmentFile=/etc/environment
+EnvironmentFile=/etc/metadata
 
 ExecStartPre=-/usr/bin/docker kill jenkins-worker.%i
 ExecStartPre=-/usr/bin/docker rm jenkins.%i

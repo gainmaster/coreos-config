@@ -4,7 +4,7 @@ coreos:
   etcd:
     name: coreos2
     # generate a new token for each unique cluster from https://discovery.etcd.io/new
-    discovery: https://discovery.etcd.io/a6b319272f785beda6b7eb4ede447ba1
+    discovery: https://discovery.etcd.io/7863b680910e37870334ae19594de26c
     addr: 10.0.0.101:4001       # For client communication
     peer-addr: 10.0.0.101:7001  # For server communication
   fleet:
@@ -15,8 +15,21 @@ coreos:
   units:
     - name: etcd.service
       command: start
+
     - name: fleet.service
       command: start
+
+    - name: rpc-statd.service
+      command: start
+      enable: true
+
+    - name: mnt-shared.mount
+      command: start
+      content: |
+        [Mount]
+        What=10.0.0.20:/
+        Where=/mnt/shared
+        Type=nfs
 
 hostname: coreos2
 
@@ -71,3 +84,8 @@ write_files:
     content: |
       PUBLIC_IPV4=158.38.57.118
       PRIVATE_IPV4=10.0.0.101
+
+  - path: /etc/conf.d/nfs
+    permissions: '0644'
+    content: |
+      OPTS_RPC_MOUNTD=""

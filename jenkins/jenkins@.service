@@ -2,11 +2,12 @@
 Description=Jenkins CI Service on port %i
 
 Requires=etcd.service
-Requires=docker.service
-Requires=jenkins-discovery@%i.service
-
 After=etcd.service
+
+Requires=docker.service
 After=docker.service
+
+Requires=jenkins-discovery@%i.service
 Before=jenkins-discovery@%i.service
 
 [Service]
@@ -14,12 +15,14 @@ TimeoutStartSec=0
 KillMode=none
 EnvironmentFile=/etc/metadata
 
-ExecStartPre=-/usr/bin/docker kill jenkins-worker.%i
+ExecStartPre=-/usr/bin/docker kill jenkins.%i
 ExecStartPre=-/usr/bin/docker rm jenkins.%i
 ExecStartPre=/usr/bin/docker pull bachelorthesis/jenkins
 
-ExecStart=/usr/bin/docker run -rm --name jenkins.%i -p ${PRIVATE_IPV4}:%i:8080 \
-bachelorthesis/jenkins /usr/sbin/java -jar /usr/share/java/jenkins/jenkins.war
+ExecStart=/usr/bin/docker run -rm --name jenkins.%i /
+  -v ${PRIVATE_IPV4}/jenkins/master:/var/lib/jenkins /
+  -p ${PRIVATE_IPV4}:%i:8080 /
+  bachelorthesis/jenkins
 
 ExecStop=/usr/bin/docker stop jenkins.%i
 

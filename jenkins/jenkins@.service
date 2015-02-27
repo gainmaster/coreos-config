@@ -19,9 +19,9 @@ ExecStartPre=-/usr/bin/docker kill jenkins.%i
 ExecStartPre=-/usr/bin/docker rm jenkins.%i
 ExecStartPre=/usr/bin/docker pull bachelorthesis/jenkins
 
-ExecStart=/usr/bin/docker run -rm --name jenkins.%i /
-  -v ${PRIVATE_IPV4}/jenkins/master:/var/lib/jenkins /
-  -p ${PRIVATE_IPV4}:%i:8080 /
+ExecStart=/usr/bin/docker run -rm --name jenkins.%i \
+  -v ${SHARED_DATA}/jenkins/master:/var/lib/jenkins \
+  -p ${PRIVATE_IPV4}:%i:8080 \
   bachelorthesis/jenkins
 
 ExecStop=/usr/bin/docker stop jenkins.%i

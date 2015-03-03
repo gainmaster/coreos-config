@@ -83,7 +83,7 @@ coreos:
         After=etcd.service
 
         [Service]
-        ExecStart=/usr/bin/etcdctl set /skydsn/im/hesjevik/coreos1 \
+        ExecStart=/usr/bin/etcdctl set /skydns/im/hesjevik/coreos1 \
           '{"host":"158.38.57.117","ttl":3600}'
         Type=oneshot
 
@@ -97,7 +97,7 @@ coreos:
         After=etcd.service
 
         [Service]
-        ExecStart=/usr/bin/etcdctl set /skydsn/im/hesjevik/dns/ns \
+        ExecStart=/usr/bin/etcdctl set /skydns/im/hesjevik/dns/ns \
           '{"host":"158.38.57.117"}'
         Type=oneshot
 

@@ -85,7 +85,7 @@ coreos:
         After=etcd.service
 
         [Service]
-        ExecStart=/usr/bin/etcdctl set /skydns/no-hitme/dns/ns \
+        ExecStart=/usr/bin/etcdctl set /skydns/no/hit-me/dns/ns \
           '{"host":"158.38.57.117"}'
         Type=oneshot
 

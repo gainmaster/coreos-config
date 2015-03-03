@@ -80,8 +80,8 @@ write_files:
       [Network]
       Address=158.38.57.119/24
       Gateway=158.38.57.1
-      DNS=158.38.50.10
-      DNS=158.38.49.10
+      DNS=10.0.0.100
+      DNS=10.0.0.101
 
   - path: /etc/systemd/network/private.network
     permissions: 0644

@@ -84,6 +84,7 @@ write_files:
     content: |
       PUBLIC_IPV4=158.38.57.117
       PRIVATE_IPV4=10.0.0.100
+      SHARED_DATA=/mnt/shared
 
   - path: /etc/conf.d/nfs
     permissions: '0644'

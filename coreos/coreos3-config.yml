@@ -31,6 +31,20 @@ coreos:
         Where=/mnt/shared
         Type=nfs
 
+    - name: register-self-skydns.service
+      command: start
+      content: |
+        [Unit]
+        Description=Registers this servers DNS record in SkyDNS config
+
+        Requires=etcd.service
+        After=etcd.service
+
+        [Service]
+        ExecStart=/usr/bin/etcdctl set /skydsn/im/hesjevik/coreos3 \
+          '{"host":"158.38.57.119","ttl":3600}'
+        Type=oneshot
+
 hostname: coreos3
 
 users:

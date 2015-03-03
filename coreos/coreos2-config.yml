@@ -31,6 +31,76 @@ coreos:
         Where=/mnt/shared
         Type=nfs
 
+    - name: skydns-config-update.service
+      command: start
+      content: |
+        [Unit]
+        Description=Restarts SkyDNS after config update
+
+        [Service]
+        ExecStart=/usr/bin/etcdctl exec-watch /skydns/config -- bash -c \
+          "/usr/bin/systemctl restart skydns.service"
+
+    - name: skydns.service
+      command: start
+      content: |
+        [Unit]
+        Description=SkyDNS service
+
+        Requires=etcd.service
+        After=etcd.service
+
+        Requires=docker.service
+        After=docker.service
+
+        Requires=skydns-config-update.service
+        Before=skydns-config-update.service
+
+        [Service]
+        TimeoutStartSec=0
+        KillMode=none
+
+        ExecStartPre=-/usr/bin/docker kill skydns
+        ExecStartPre=-/usr/bin/docker rm skydns
+        ExecStartPre=/usr/bin/docker pull skynetservices/skydns
+
+        ExecStart=/usr/bin/docker run --rm --name skydns \
+          -e "ETCD_MACHINES=http://10.0.0.101:4001" \
+          -e "SKYDNS_NAMESERVERS=158.38.50.10:53,158.38.49.10:53" \
+          -e "SKYDNS_DOMAIN=hesjevik.im" \
+          -p 53:53 \
+          skynetservices/skydns
+
+        ExecStop=/usr/bin/docker stop skydns
+
+    - name: register-self-skydns.service
+      command: start
+      content: |
+        [Unit]
+        Description=Registers this servers DNS record in SkyDNS config
+
+        Requires=etcd.service
+        After=etcd.service
+
+        [Service]
+        ExecStart=/usr/bin/etcdctl set /skydsn/im/hesjevik/coreos2 \
+          '{"host":"158.38.57.118","ttl":3600}'
+        Type=oneshot
+
+    - name: register-self-as-ns-skydns.service
+      command: start
+      content: |
+        [Unit]
+        Description=Registers this server as NS in SkyDNS config
+
+        Requires=etcd.service
+        After=etcd.service
+
+        [Service]
+        ExecStart=/usr/bin/etcdctl set /skydsn/im/hesjevik/dns/ns2 \
+          '{"host":"158.38.57.118"}'
+        Type=oneshot
+
 hostname: coreos2
 
 users:

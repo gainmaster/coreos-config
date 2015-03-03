@@ -12,15 +12,12 @@ TimeoutStartSec=0
 KillMode=none
 EnvironmentFile=/etc/metadata
 
-ExecStartPre=-/usr/bin/docker kill skydns.%i
-ExecStartPre=-/usr/bin/docker rm skydns.%i
+ExecStartPre=-/usr/bin/docker kill skydns
+ExecStartPre=-/usr/bin/docker rm skydns
 ExecStartPre=/usr/bin/docker pull skynetservices/skydns
 
 ExecStart=/usr/bin/docker run -rm --name skydns.%i \
   -p ${PUBLIC_IPV4}:53:53 \
   skynetservices/skydns
 
-ExecStop=/usr/bin/docker stop skydns.%i
-
-[X-Fleet]
-Conflicts=skydns*.service
+ExecStop=/usr/bin/docker stop skydns

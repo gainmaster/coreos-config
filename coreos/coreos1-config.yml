@@ -31,16 +31,6 @@ coreos:
         Where=/mnt/shared
         Type=nfs
 
-    - name: skydns-config-update.service
-      command: start
-      content: |
-        [Unit]
-        Description=Restarts SkyDNS after config update
-
-        [Service]
-        ExecStart=/usr/bin/etcdctl exec-watch /skydns/config -- bash -c \
-          "/usr/bin/systemctl restart skydns.service"
-
     - name: skydns.service
       command: start
       content: |
@@ -53,9 +43,6 @@ coreos:
         Requires=docker.service
         After=docker.service
 
-        Requires=skydns-config-update.service
-        Before=skydns-config-update.service
-
         [Service]
         TimeoutStartSec=0
         KillMode=none
@@ -66,16 +53,15 @@ coreos:
 
         ExecStart=/usr/bin/docker run --rm --name skydns \
           -e "ETCD_MACHINES=http://10.0.0.100:4001" \
-          -e "SKYDNS_NAMESERVERS=158.38.50.10:53,158.38.49.10:53" \
           -e "SKYDNS_ADDR=0.0.0.0:53" \
-          -e "SKYDNS_DOMAIN=hesjevik.im" \
+          -e "SKYDNS_DOMAIN=hit-me.no" \
           -p 53:53/udp \
           -p 53:53/tcp \
           skynetservices/skydns
 
         ExecStop=/usr/bin/docker stop skydns
 
-    - name: register-self-skydns.service
+    - name: skydns-register-coreos1.service
       command: start
       content: |
         [Unit]
@@ -85,11 +71,11 @@ coreos:
         After=etcd.service
 
         [Service]
-        ExecStart=/usr/bin/etcdctl set /skydns/im/hesjevik/coreos1 \
+        ExecStart=/usr/bin/etcdctl set /skydns/no/hit-me/coreos1 \
           '{"host":"158.38.57.117","ttl":3600}'
         Type=oneshot
 
-    - name: register-self-as-ns-skydns.service
+    - name: skydns-register-dns-ns.service
       command: start
       content: |
         [Unit]
@@ -99,7 +85,7 @@ coreos:
         After=etcd.service
 
         [Service]
-        ExecStart=/usr/bin/etcdctl set /skydns/im/hesjevik/dns/ns1 \
+        ExecStart=/usr/bin/etcdctl set /skydns/im/hesjevik/dns/ns \
           '{"host":"158.38.57.117"}'
         Type=oneshot
 
@@ -138,8 +124,8 @@ write_files:
       [Network]
       Address=158.38.57.117/24
       Gateway=158.38.57.1
-      DNS=10.0.0.100
-      DNS=10.0.0.101
+      DNS=158.38.50.10
+      DNS=158.38.49.10
 
   - path: /etc/systemd/network/private.network
     permissions: 0644

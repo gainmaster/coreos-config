@@ -99,7 +99,7 @@ coreos:
         After=etcd.service
 
         [Service]
-        ExecStart=/usr/bin/etcdctl set /skydns/im/hesjevik/dns/ns \
+        ExecStart=/usr/bin/etcdctl set /skydns/im/hesjevik/dns/ns1 \
           '{"host":"158.38.57.117"}'
         Type=oneshot
 
@@ -140,8 +140,6 @@ write_files:
       Gateway=158.38.57.1
       DNS=10.0.0.100
       DNS=10.0.0.101
-      DNS=158.38.50.10
-      DNS=158.38.49.10
 
   - path: /etc/systemd/network/private.network
     permissions: 0644

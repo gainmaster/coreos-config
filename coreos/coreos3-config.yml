@@ -62,7 +62,7 @@ coreos:
         ExecStartPre=-/usr/bin/docker rm registrator
         ExecStart=/usr/bin/docker run --rm --name registrator -d \
           -v /var/run/docker.sock:/tmp/docker.sock \
-          -h $HOSTNAME \
+          -h coreos3 \
           gliderlabs/registrator skydns2:///hesjevik.im
 
         ExecStop=/usr/bin/docker stop registrator

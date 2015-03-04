@@ -41,7 +41,7 @@ coreos:
         After=etcd.service
 
         [Service]
-        ExecStart=/usr/bin/etcdctl set /skydns/no/hit-me/coreos3 \
+        ExecStart=/usr/bin/etcdctl set /skydns/im/hesjevik/coreos3 \
           '{"host":"158.38.57.119","ttl":3600}'
         Type=oneshot
 

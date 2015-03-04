@@ -54,7 +54,7 @@ coreos:
         ExecStart=/usr/bin/docker run --rm --name skydns \
           -e "ETCD_MACHINES=http://10.0.0.100:4001" \
           -e "SKYDNS_ADDR=0.0.0.0:53" \
-          -e "SKYDNS_DOMAIN=hit-me.no" \
+          -e "SKYDNS_DOMAIN=hesjevik.im" \
           -p 53:53/udp \
           -p 53:53/tcp \
           skynetservices/skydns
@@ -71,7 +71,7 @@ coreos:
         After=etcd.service
 
         [Service]
-        ExecStart=/usr/bin/etcdctl set /skydns/no/hit-me/coreos1 \
+        ExecStart=/usr/bin/etcdctl set /skydns/im/hesjevik/coreos1 \
           '{"host":"158.38.57.117","ttl":3600}'
         Type=oneshot
 
@@ -85,7 +85,7 @@ coreos:
         After=etcd.service
 
         [Service]
-        ExecStart=/usr/bin/etcdctl set /skydns/no/hit-me/dns/ns \
+        ExecStart=/usr/bin/etcdctl set /skydns/im/hesjevik/dns/ns \
           '{"host":"158.38.57.117"}'
         Type=oneshot
 

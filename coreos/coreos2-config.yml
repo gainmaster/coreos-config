@@ -89,6 +89,28 @@ coreos:
           '{"host":"158.38.57.118"}'
         Type=oneshot
 
+    - name: registrator.service
+      command: start
+      content: |
+        [Unit]
+        Description=Registrator service
+
+        Requires=etcd.service
+        After=etcd.service
+
+        Requires=docker.service
+        After=docker.service
+
+        [Service]
+        ExecStartPre=-/usr/bin/docker kill registrator
+        ExecStartPre=-/usr/bin/docker rm registrator
+        ExecStart=/usr/bin/docker run --rm --name registrator -d \
+          -v /var/run/docker.sock:/tmp/docker.sock \
+          -h $HOSTNAME \
+          gliderlabs/registrator skydns2:///hesjevik.im
+
+        ExecStop=/usr/bin/docker stop registrator
+
 hostname: coreos2
 
 users:

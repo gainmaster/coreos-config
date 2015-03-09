@@ -1,0 +1,32 @@
+[Unit]
+Description=Vulancd service id %i
+
+Requires=etcd.service
+After=etcd.service
+
+Requires=docker.service
+After=docker.service
+
+[Service]
+TimeoutStartSec=0
+KillMode=none
+EnvironmentFile=/etc/metadata
+
+ExecStartPre=-/usr/bin/docker kill vulcand%i
+ExecStartPre=-/usr/bin/docker rm vulcand%i
+ExecStartPre=/usr/bin/docker pull bachelorthesis/vulcand
+
+ExecStart=/usr/bin/docker run --rm --name vulcand%i \
+  -p 8181:8181 \
+  -p 8182:8182 \
+  -p 80:80 \
+  -port=80 \
+  -apiPort=8182 \
+  -apiInterface=0.0.0.0 \
+  --etcd=http://$(ifconfig docker0 | awk '/\<inet\>/ { print $2}'):4001 \
+  bachelorthesis/vulcand
+
+ExecStop=/usr/bin/docker stop vulcand%i
+
+[X-Fleet]
+Conflicts=vulcand@*.service

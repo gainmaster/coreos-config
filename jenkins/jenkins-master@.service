@@ -1,0 +1,33 @@
+[Unit]
+Description=Jenkins CI master service id %i
+
+Requires=etcd.service
+After=etcd.service
+
+Requires=docker.service
+After=docker.service
+
+Requires=jenkins-master-registrator@%i.service
+Before=jenkins-master-registrator@%i.service
+
+[Service]
+TimeoutStartSec=0
+KillMode=none
+EnvironmentFile=/etc/metadata
+
+ExecStartPre=-/usr/bin/docker kill jenkins-master
+ExecStartPre=-/usr/bin/docker rm jenkins-master
+ExecStartPre=/usr/bin/docker pull bachelorthesis/jenkins
+
+ExecStart=/usr/bin/docker run --rm --name jenkins-master \
+  -v ${SHARED_DATA}/jenkins/master:/var/lib/jenkins \
+  -p ${PUBLIC_IPV4}:%i:8080 \
+  -e SERIVE_NAME=jenkins \
+  -e SERVICE_TAGS=master \
+  -e SERVICE_ID=%i \
+  bachelorthesis/jenkins
+
+ExecStop=/usr/bin/docker stop jenkins-master
+
+[X-Fleet]
+Conflicts=jenkins-master@*.service

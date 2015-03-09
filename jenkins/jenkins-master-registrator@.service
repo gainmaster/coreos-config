@@ -1,0 +1,29 @@
+[Unit]
+Description=Register Jenkins CI master service id %i to Vulcand
+
+Requires=etcd.service
+After=etcd.service
+
+BindsTo=jenkins-master@%i.service
+After=jenkins-master@%i.service
+
+[Service]
+EnvironmentFile=/etc/metadata
+RemainAfterExit=yes
+
+ExecStart=/usr/bin/bash -c "\
+  /usr/bin/etcdctl set /vulcand/backends/jenkins/backend '{\"Type\":\"http\"}'; \
+  /usr/bin/etcdctl set /vulcand/backends/jenkins/servers/jenkins-%i '{\"URL\": \"http://${PUBLIC_IPV4}:%i\"}'; \
+  /usr/bin/etcdctl set /vulcand/frontends/jenkins/frontend '{\"Type\": \"http\", \"BackendId\": \"jenkins\", \"Route\": \"Host(`jenkins.hesjevik.im`)\"}'"
+
+ExecStop=/bin/etcdctl rm /vulcand/backends/jenkins/servers/jenkins-%i
+
+ExecStopPost=/usr/bin/bash -c "\
+  status=curl -s -I jenkins.hesjevik.im | grep HTTP/1.1 | awk {'print $2'} \
+  if [ $status -ne 200 ]; then \
+      /usr/bin/etcdctl rm /vulcand/backends/jenkins/backend \
+      /usr/bin/etcdctl rm /vulcand/frontends/jenkins/frontend \
+  fi "
+
+[X-Fleet]
+MachineOf=jenkins-master@%i.service

@@ -7,8 +7,8 @@ After=etcd.service
 Requires=docker.service
 After=docker.service
 
-Requires=jenkins-discovery@%i.service
-Before=jenkins-discovery@%i.service
+Requires=register-jenkins@%i.service
+Before=register-jenkins@%i.service
 
 [Service]
 TimeoutStartSec=0

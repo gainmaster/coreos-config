@@ -7,10 +7,9 @@ After=nginx@.service
 EnvironmentFile=/etc/metadata
 RemainAfterExit=yes
 
-ExecStart=/bin/sh -c " \
-	/bin/etcdctl set /vulcand/backends/nginx/backend '{"Type": "http"}'; \
-	/bin/etcdctl set --ttl 5 /vulcand/backends/nginx/servers/nginx-%i '{"URL": "http://${PUBLIC_IPV4}:%i"}'; \
-  	/bin/etcdctl set /vulcand/frontends/nginx/frontend '{"Type": "http", "BackendId": "nginx", "Route": "Path(`/`)"}' "
+ExecStart=/bin/etcdctl set /vulcand/backends/nginx/backend '{"Type": "http"}'; 
+ExecStart=/bin/etcdctl set --ttl 5 /vulcand/backends/nginx/servers/nginx-%i '{"URL": "http://${PUBLIC_IPV4}:%i"}'; 
+ExecStart=/bin/etcdctl set /vulcand/frontends/nginx/frontend '{"Type": "http", "BackendId": "nginx", "Route": "Path(`/`)"}'
 
 [X-Fleet]
-X-ConditionMachineOf=nginx@.service
+MachineOf=nginx@.service

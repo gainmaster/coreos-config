@@ -17,8 +17,7 @@ ExecStartPre=-/usr/bin/docker rm nginx.%i
 ExecStartPre=/usr/bin/docker pull bachelorthesis/nginx
 
 ExecStart=/usr/bin/docker run -rm --name nginx.%i \
-     -p ${PUBLIC_IPV4}:%i:80 \
-  bachelorthesis/nginx
+     -p ${PUBLIC_IPV4}:%i:80 bachelorthesis/nginx
 
 ExecStop=/usr/bin/docker stop nginx.%i
 

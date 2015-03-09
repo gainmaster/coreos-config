@@ -9,8 +9,10 @@ RemainAfterExit=yes
 
 ExecStart=/usr/bin/bash -c \
 	"/bin/etcdctl set /vulcand/backends/nginx/backend '{\"Type\":\"http\"}'; \
-	 /bin/etcdctl set --ttl 5 /vulcand/backends/nginx/servers/nginx-%i '{\"URL\": \"http://${PUBLIC_IPV4}:%i\"}'; \
+	 /bin/etcdctl set /vulcand/backends/nginx/servers/nginx-%i '{\"URL\": \"http://${PUBLIC_IPV4}:%i\"}'; \
 	 /bin/etcdctl set /vulcand/frontends/nginx/frontend '{\"Type\": \"http\", \"BackendId\": \"nginx\", \"Route\": \"Path(`/`)\"}'"
+
+ExecStop=/bin/etcdctl rm /vulcand/backends/nginx/servers/nginx-%i
 
 [X-Fleet]
 MachineOf=nginx@%i.service

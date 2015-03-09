@@ -1,15 +1,16 @@
 [Unit]
-Description=Register for nginx
-BindsTo=nginx@.service
-After=nginx@.service
+Description=Register nginx at port %i
+BindsTo=nginx@%i.service
+After=nginx@%i.service
 
 [Service]
 EnvironmentFile=/etc/metadata
 RemainAfterExit=yes
 
-ExecStart=/bin/etcdctl set /vulcand/backends/nginx/backend '{"Type": "http"}'; 
-ExecStart=/bin/etcdctl set --ttl 5 /vulcand/backends/nginx/servers/nginx-%i '{"URL": "http://${PUBLIC_IPV4}:%i"}'; 
-ExecStart=/bin/etcdctl set /vulcand/frontends/nginx/frontend '{"Type": "http", "BackendId": "nginx", "Route": "Path(`/`)"}'
+ExecStart=/usr/bin/bash -c \
+	"/bin/etcdctl set /vulcand/backends/nginx/backend '{\"Type\":\"http\"}'; \
+	 /bin/etcdctl set --ttl 5 /vulcand/backends/nginx/servers/nginx-%i '{\"URL\": \"http://${PUBLIC_IPV4}:%i\"}'; \
+	 /bin/etcdctl set /vulcand/frontends/nginx/frontend '{\"Type\": \"http\", \"BackendId\": \"nginx\", \"Route\": \"Path(`/`)\"}'"
 
 [X-Fleet]
-MachineOf=nginx@.service
+MachineOf=nginx@%i.service

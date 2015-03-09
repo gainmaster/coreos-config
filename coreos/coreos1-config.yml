@@ -107,7 +107,7 @@ coreos:
         ExecStart=/usr/bin/docker run --rm --name registrator \
           -v /var/run/docker.sock:/tmp/docker.sock \
           -h coreos1 \
-          gliderlabs/registrator etcd://10.0.0.100:4001/service
+          gliderlabs/registrator etcd://10.0.0.100:4001/registrator
 
         ExecStop=/usr/bin/docker stop registrator
 

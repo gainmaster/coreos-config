@@ -21,9 +21,8 @@ ExecStartPre=/usr/bin/docker pull bachelorthesis/jenkins
 
 ExecStart=/usr/bin/docker run --rm --name jenkins-master \
   -v ${SHARED_DATA}/jenkins/master:/var/lib/jenkins \
-  -p ${PUBLIC_IPV4}:%i:8080 \
-  -e SERIVE_NAME=jenkins \
-  -e SERVICE_TAGS=master \
+  -p ${PRIVATE_IPV4}::8080 \
+  -e SERIVCE_NAME=jenkins-master \
   -e SERVICE_ID=%i \
   bachelorthesis/jenkins
 

@@ -4,6 +4,9 @@ Description=Register Jenkins CI master service id %i to Vulcand
 Requires=etcd.service
 After=etcd.service
 
+Requires=registrator.service
+After=registrator.service
+
 BindsTo=jenkins-master@%i.service
 After=jenkins-master@%i.service
 

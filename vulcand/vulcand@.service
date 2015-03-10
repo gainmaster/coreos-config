@@ -20,7 +20,7 @@ ExecStart=/usr/bin/docker run --rm --name vulcand \
   -p 80:80 \
   bachelorthesis/vulcand \
   -port=80 \
-  --etcd=http://$(ifconfig docker0 | awk '/\<inet\>/ { print $2}'):4001
+  --etcd=http://${PRIVATE_IPV4}:4001
 
 ExecStop=/usr/bin/docker stop vulcand
 

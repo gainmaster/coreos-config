@@ -16,18 +16,17 @@ RemainAfterExit=yes
 
 ExecStart=/usr/bin/bash -c "\
   /usr/bin/sleep 5; \
-  export address=$(/usr/bin/etcdctl get /registrator/jenkins-master/%i); \
-  /usr/bin/etcdctl set /vulcand/backends/jenkins/backend '{\"Type\":\"http\"}'; \
-  /usr/bin/etcdctl set /vulcand/backends/jenkins/servers/jenkins-%i '{\"URL\": \"http://${address}\"}'; \
+  /usr/bin/etcdctl set /vulcand/backends/jenkins/backend '{\"Type\": \"http\"}'; \
+  /usr/bin/etcdctl set /vulcand/backends/jenkins/servers/jenkins-%i '{\"URL\": \"http://$(/usr/bin/etcdctl get /registrator/jenkins-master/%i)\"}'; \
   /usr/bin/etcdctl set /vulcand/frontends/jenkins/frontend '{\"Type\": \"http\", \"BackendId\": \"jenkins\", \"Route\": \"Host(`jenkins.hesjevik.im`)\"}'"
 
 ExecStop=/bin/etcdctl rm /vulcand/backends/jenkins/servers/jenkins-%i
 
 ExecStopPost=/usr/bin/bash -c "\
-  status=$(curl -s -I jenkins.hesjevik.im | grep HTTP/1.1 | awk {'print $2'}); \
+  status=$(curl -f -s -I jenkins.hesjevik.im | grep HTTP/1.1 | awk {'print $2'}); \
   if [ $status -ne 200 ]; then \
-      /usr/bin/etcdctl rm /vulcand/backends/jenkins/backend; \
-      /usr/bin/etcdctl rm /vulcand/frontends/jenkins/frontend; \
+      /usr/bin/etcdctl rm /vulcand/backends/jenkins --recursive; \
+      /usr/bin/etcdctl rm /vulcand/frontends/jenkins --recursive; \
   fi"
 
 [X-Fleet]

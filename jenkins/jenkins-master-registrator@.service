@@ -17,6 +17,7 @@ RemainAfterExit=yes
 ExecStart=/usr/bin/bash -c "\
   /usr/bin/sleep 5; \
   address=$(/usr/bin/etcdctl get /registrator/jenkins-master/%i); \
+  /usr/bin/etcdctl get /registrator/jenkins-master/%i > /home/tony/test 2>&1; \
   /usr/bin/etcdctl set /vulcand/backends/jenkins/backend '{\"Type\":\"http\"}'; \
   /usr/bin/etcdctl set /vulcand/backends/jenkins/servers/jenkins-%i '{\"URL\": \"http://${address}\"}'; \
   /usr/bin/etcdctl set /vulcand/frontends/jenkins/frontend '{\"Type\": \"http\", \"BackendId\": \"jenkins\", \"Route\": \"Host(`jenkins.hesjevik.im`)\"}'"

@@ -14,11 +14,11 @@ After=jenkins-master@%i.service
 EnvironmentFile=/etc/metadata
 RemainAfterExit=yes
 
-ExecStart=/usr/bin/bash -c '\
-  /usr/bin/sleep 5; \
-  /usr/bin/etcdctl set /vulcand/backends/jenkins/backend "{\"Type\": "\http\"}"; \
-  /usr/bin/etcdctl set /vulcand/backends/jenkins/servers/jenkins-%i "{\"URL\": \"http://$(/usr/bin/etcdctl get /registrator/jenkins-master/%i)\"}"; \
-  /usr/bin/etcdctl set /vulcand/frontends/jenkins/frontend "{\"Type\": \"http\", \"BackendId\": \"jenkins\", \"Route\": \"Host(\`jenkins.hesjevik.im\`)\"}"'
+ExecStart=/usr/bin/bash -c "\
+  /usr/bin/sleep 0; \
+  /usr/bin/etcdctl set /vulcand/backends/jenkins/backend '{\"Type\": \"http\"}'; \
+  /usr/bin/etcdctl set /vulcand/backends/jenkins/servers/jenkins-%i '{\"URL\": \"http://"$(/usr/bin/etcdctl get /registrator/jenkins-master/%i)"\"}'; \
+  /usr/bin/etcdctl set /vulcand/frontends/jenkins/frontend '{\"Type\": \"http\", \"BackendId\": \"jenkins\", \"Route\": \"Host(\`jenkins.hesjevik.im\`)\"}'"
 
 ExecStop=/bin/etcdctl rm /vulcand/backends/jenkins/servers/jenkins-%i
 

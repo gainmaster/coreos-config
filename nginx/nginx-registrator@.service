@@ -17,5 +17,12 @@ ExecStart=/usr/bin/bash -c "\
 
 ExecStop=/bin/etcdctl rm /vulcand/backends/nginx/servers/nginx-%i
 
+ExecStopPost=/usr/bin/bash -c "\
+  status=curl -s -I hesjevik.im | grep HTTP | awk {'print $2'} \
+  if [ $status -ne 200 ]; then \
+      /usr/bin/etcdctl rm /vulcand/backends/nginx/backend \
+      /usr/bin/etcdctl rm /vulcand/frontends/nginx/frontend \
+  fi "
+
 [X-Fleet]
 MachineOf=nginx@%i.service

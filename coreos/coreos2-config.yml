@@ -55,8 +55,10 @@ coreos:
           -e "ETCD_MACHINES=http://10.0.0.101:4001" \
           -e "SKYDNS_ADDR=0.0.0.0:53" \
           -e "SKYDNS_DOMAIN=hesjevik.im" \
+          -e "SKYDNS_NAMESERVERS=" \
           -p 53:53/udp \
           -p 53:53/tcp \
+          --dns=127.0.0.1 \
           skynetservices/skydns
 
         ExecStop=/usr/bin/docker stop skydns

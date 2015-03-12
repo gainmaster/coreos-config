@@ -32,7 +32,7 @@ ExecStop=/bin/etcdctl rm /vulcand/backends/jenkins/servers/jenkins-%i
 
 ExecStopPost=/usr/bin/bash -c '\
   JENKINS_STATUS=$(curl -f -s -I jenkins.hesjevik.im | grep HTTP/1.1); \
-  if [ -z "$JENKINS_STATUS" ]; then 
+  if [ -z "$JENKINS_STATUS" ]; then \
       /usr/bin/etcdctl rm /vulcand/backends/jenkins --recursive; \
       /usr/bin/etcdctl rm /vulcand/frontends/jenkins --recursive; \
   fi'

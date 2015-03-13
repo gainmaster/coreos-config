@@ -1,0 +1,23 @@
+[Unit]
+Description=Registrator service
+
+Requires=etcd.service
+After=etcd.service
+
+Requires=docker.service
+After=docker.service
+
+[Service]
+EnvironmentFile=/etc/metadata
+
+ExecStartPre=-/usr/bin/docker kill registrator
+ExecStartPre=-/usr/bin/docker rm registrator
+ExecStart=/usr/bin/docker run --rm --name registrator \
+  -v /var/run/docker.sock:/tmp/docker.sock \
+  -h coreos1 \
+  gliderlabs/registrator etcd://${PRIVATE_IPV4}:4001/registrator
+
+ExecStop=/usr/bin/docker stop registrator
+
+[X-Fleet]
+Global=true

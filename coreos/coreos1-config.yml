@@ -63,20 +63,6 @@ coreos:
 
         ExecStop=/usr/bin/docker stop skydns
 
-    - name: skydns-register-coreos1.service
-      command: start
-      content: |
-        [Unit]
-        Description=Registers this servers DNS record in SkyDNS config
-
-        Requires=etcd.service
-        After=etcd.service
-
-        [Service]
-        ExecStart=/usr/bin/etcdctl set /skydns/im/hesjevik/coreos1 \
-          '{"host":"158.38.57.117","ttl":3600}'
-        Type=oneshot
-
     - name: skydns-register-dns-ns.service
       command: start
       content: |
@@ -90,28 +76,6 @@ coreos:
         ExecStart=/usr/bin/etcdctl set /skydns/im/hesjevik/dns/ns \
           '{"host":"158.38.57.117"}'
         Type=oneshot
-
-    - name: registrator.service
-      command: start
-      content: |
-        [Unit]
-        Description=Registrator service
-
-        Requires=etcd.service
-        After=etcd.service
-
-        Requires=docker.service
-        After=docker.service
-
-        [Service]
-        ExecStartPre=-/usr/bin/docker kill registrator
-        ExecStartPre=-/usr/bin/docker rm registrator
-        ExecStart=/usr/bin/docker run --rm --name registrator \
-          -v /var/run/docker.sock:/tmp/docker.sock \
-          -h coreos1 \
-          gliderlabs/registrator etcd://10.0.0.100:4001/registrator
-
-        ExecStop=/usr/bin/docker stop registrator
 
 hostname: coreos1
 

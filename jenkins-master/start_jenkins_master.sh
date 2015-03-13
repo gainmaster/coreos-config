@@ -10,7 +10,7 @@ echo "==========================================================================
 echo ""
 
 # Start SkyDNS node registrator fleetd unit
-fleetctl start jenkins-master@${1}.service jenkins-master-registrator@{1}.service
+fleetctl start "jenkins-master@${1}.service" "jenkins-master-registrator@{1}.service"
 
 echo ""
 echo "==============================================================================================="

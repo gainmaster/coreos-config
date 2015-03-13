@@ -18,10 +18,11 @@ RemainAfterExit=yes
 ExecStartPre=/usr/bin/bash -c '\
   until (/usr/bin/etcdctl get /registrator/jenkins-master/%i); do \
     sleep 3; \
-  done; 
+  done'
 
-ExecStart=/usr/bin/bash -c "\
-  /usr/bin/etcdctl set /vulcand/backends/jenkins/servers/jenkins-%i '{\"URL\": \"http://$(/usr/bin/etcdctl get /registrator/jenkins-master/%i)\"}'"
+ExecStart=/usr/bin/bash -c '\
+   JENKINS_ADDRESS=http://$(/usr/bin/etcdctl get /registrator/jenkins-master/1)
+  /usr/bin/etcdctl set /vulcand/backends/jenkins/servers/jenkins-1 "{\"URL\": \""$JENKINS_ADDRESS"\"}"'
 
 ExecStartPost=/usr/bin/etcdctl set /vulcand/backends/jenkins/backend '{"Type": "http"}'
 ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/jenkins/frontend '{"Type": "http", "BackendId": "jenkins", "Route": "Host(`jenkins.hesjevik.im`)"}'

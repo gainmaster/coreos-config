@@ -4,25 +4,16 @@ Description=Register Jenkins CI master service id %i to Vulcand
 Requires=etcd.service
 After=etcd.service
 
-Requires=registrator.service
-After=registrator.service
-
 BindsTo=jenkins-master@%i.service
 After=jenkins-master@%i.service
 
 [Service]
 EnvironmentFile=/etc/metadata
+EnvironmentFile=/tmp/jenkins_master_env
 RemainAfterExit=yes
 
 # Start
-ExecStartPre=/usr/bin/bash -c '\
-  until (/usr/bin/etcdctl get /registrator/jenkins-master/%i); do \
-    sleep 3; \
-  done; \
-  echo JENKINS_ADDRESS=http://$(/usr/bin/etcdctl get /registrator/jenkins-master/1) > /tmp/jenkins_env'
-
-EnvironmentFile=/tmp/jenkins_env
-ExecStart=/usr/bin/etcdctl set /vulcand/backends/jenkins/servers/jenkins-%i '{"URL": "$JENKINS_ADDRESS"}'
+ExecStart=/usr/bin/etcdctl set /vulcand/backends/jenkins/servers/jenkins-%i '{"URL": "${JENKINS_ADDRESS}"}'
 
 ExecStartPost=/usr/bin/etcdctl set /vulcand/backends/jenkins/backend '{"Type": "http"}'
 ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/jenkins/frontend '{"Type": "http", "BackendId": "jenkins", "Route": "Host(`jenkins.hesjevik.im`)"}'

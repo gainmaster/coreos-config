@@ -7,6 +7,9 @@ After=etcd.service
 Requires=docker.service
 After=docker.service
 
+Requires=registrator.service
+After=registrator.service
+
 Requires=jenkins-master-registrator@%i.service
 Before=jenkins-master-registrator@%i.service
 
@@ -25,6 +28,12 @@ ExecStart=/usr/bin/docker run --rm --name jenkins-master \
   -e SERVICE_NAME=jenkins-master \
   -e SERVICE_ID=%i \
   bachelorthesis/jenkins
+
+ExecStartPost=/usr/bin/bash -c '\
+  until (/usr/bin/etcdctl get /registrator/jenkins-master/%i); do \
+    sleep 3; \
+  done; \
+  echo JENKINS_ADDRESS=http://$(/usr/bin/etcdctl get /registrator/jenkins-master/1) > /tmp/jenkins_master_env'
 
 ExecStop=/usr/bin/docker stop jenkins-master
 

@@ -13,7 +13,7 @@ RemainAfterExit=yes
 ExecStart=/usr/bin/bash -c "\
   /bin/etcdctl set /vulcand/backends/nginx/backend '{\"Type\":\"http\"}'; \
   /bin/etcdctl set /vulcand/backends/nginx/servers/nginx-%i '{\"URL\": \"http://${PRIVATE_IPV4}:%i\"}'; \
-  /bin/etcdctl set /vulcand/frontends/nginx/frontend '{\"Type\": \"http\", \"BackendId\": \"nginx\", \"Route\": \"Path(`/`)\"}'"
+  /bin/etcdctl set /vulcand/frontends/nginx/frontend '{\"Type\": \"http\", \"BackendId\": \"nginx\", \"Route\": \"Path(`/`) && Host(`hesjevik.im`)\"}'"
 
 ExecStop=/bin/etcdctl rm /vulcand/backends/nginx/servers/nginx-%i
 

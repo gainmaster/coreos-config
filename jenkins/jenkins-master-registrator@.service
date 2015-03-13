@@ -22,7 +22,7 @@ ExecStartPre=/usr/bin/bash -c '\
 
 ExecStart=/usr/bin/bash -c '\
    JENKINS_ADDRESS=http://$(/usr/bin/etcdctl get /registrator/jenkins-master/%i) \
-  /usr/bin/etcdctl set /vulcand/backends/jenkins/servers/jenkins-%i "{\"URL\": \""$JENKINS_ADDRESS"\"}"'
+  /usr/bin/etcdctl set /vulcand/backends/jenkins/servers/jenkins-%i {"URL":\ "$JENKINS_ADDRESS"}'
 
 ExecStartPost=/usr/bin/etcdctl set /vulcand/backends/jenkins/backend '{"Type": "http"}'
 ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/jenkins/frontend '{"Type": "http", "BackendId": "jenkins", "Route": "Host(`jenkins.hesjevik.im`)"}'

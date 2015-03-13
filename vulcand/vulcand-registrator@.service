@@ -19,7 +19,7 @@ RemainAfterExit=yes
 
 # Start
 ExecStart=/usr/bin/bash -c "\
-    /usr/bin/etcdctl set /skydns/im/hesjevik/x%i/ '{\"Host\":\"${PUBLIC_IPV4}\"' \
+    /usr/bin/etcdctl set /skydns/im/hesjevik/x%i/ '{\"Host\":\"${PUBLIC_IPV4}\"}' \
     /usr/bin/etcdctl set /skydns/im/hesjevik/x%i/jenkins '{\"Host\":\"${PUBLIC_IPV4}\"}'" 
 
 # Stop

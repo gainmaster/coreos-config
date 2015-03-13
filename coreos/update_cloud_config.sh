@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
+
 #
 # Update CoreOS cloud config 
 #
-#
 
+echo "==============================================================================================="
 echo "[update_cloud_config.sh] - Updating CoreOS cloud config for ${HOSTNAME}."
+echo "==============================================================================================="
+echo ""
 
 # Delete old config
 sudo rm -f /var/lib/coreos-install/user_data
@@ -15,7 +18,7 @@ sudo cp ./${HOSTNAME}-config.yml /var/lib/coreos-install/user_data
 echo "[update_cloud_config.sh] - New config inserted"
 
 echo ""
-echo "==============================================================================="
+echo "==============================================================================================="
 echo "[update_cloud_config.sh] - Update of CoreOS cloud config completed."
 echo "|update_cloud_config.sh] - Run 'locksmithctl reboot' to load new configuration."
-echo "==============================================================================="
+echo "==============================================================================================="

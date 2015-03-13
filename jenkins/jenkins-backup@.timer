@@ -1,9 +1,0 @@
-[Unit]
-Description=Jenkins CI Worker Service on port %i
-
-/usr/bin/bash -c '\
-  JENKINS_ADDRESS=http://$(/usr/bin/etcdctl get /registrator/jenkins-master/1); \
-  /usr/bin/etcdctl set /vulcand/backends/jenkins/servers/jenkins-1 \'{"URL": "$JENKINS_ADDRESS"}\''
-
-bash -c 'export JENKINS_ADDRESS=http://$(/usr/bin/etcdctl get /registrator/jenkins-master/1)'; \
-/usr/bin/etcdctl set /vulcand/backends/jenkins/servers/jenkins-1 '{"URL": "$JENKINS_ADDRESS"}'

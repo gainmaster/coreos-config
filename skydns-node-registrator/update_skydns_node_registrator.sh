@@ -21,5 +21,5 @@ fleetctl submit skydns-node-registrator.service
 echo ""
 echo "==============================================================================================="
 echo "[update_skydns_node_registrator.sh] - Update of SkyDNS node registrator fleetd units completed."
-echo "|update_skydns_node_registrator.sh] - Run 'start_skydns_node_registrator.sh' to start unit."
+echo "|update_skydns_node_registrator.sh] - Run 'start_skydns_node_registrator.sh' to start units."
 echo "==============================================================================================="

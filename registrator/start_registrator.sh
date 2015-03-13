@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
 # 
-# Start Registrator fleetd unit
+# Start Registrator fleetd units
 #
 
-echo "=========================================================="
-echo "[start_registrator.sh] - Starting registrator fleetd unit."
-echo "=========================================================="
+echo "==============================================================================================="
+echo "[start_registrator.sh] - Starting registrator fleetd units."
+echo "==============================================================================================="
 echo ""
 
-# Start Registrator fleetd unit
+# Start Registrator fleetd units
 fleetctl start registrator.service
 
 echo ""
-echo "=========================================================="
-echo "[start_registrator.sh] - Registrator fleetd unit started."
-echo "=========================================================="
+echo "==============================================================================================="
+echo "[start_registrator.sh] - Registrator fleetd units started."
+echo "==============================================================================================="

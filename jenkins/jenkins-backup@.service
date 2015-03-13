@@ -1,2 +1,0 @@
-[Unit]
-Description=Jenkins Backup Service, backing up Jenkins on port %i

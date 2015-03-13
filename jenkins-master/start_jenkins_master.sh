@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
 # 
-# Start SkyDNS node registrator fleetd units
+# Start Jenkins master fleetd units
 #
 
 echo "==============================================================================================="
-echo "[start_skydns_node_registrator.sh] - Starting SkyDNS node registrator fleetd units."
+echo "[start_jenkins_master.sh] - Starting Jenkins master fleetd units."
 echo "==============================================================================================="
 echo ""
 
-# Start SkyDNS node registrator fleetd units
-fleetctl start skydns-node-registrator.service
+# Start SkyDNS node registrator fleetd unit
+fleetctl start jenkins-master@${1}.service jenkins-master-registrator@{1}.service
 
 echo ""
 echo "==============================================================================================="
-echo "[start_skydns_node_registrator.sh] - SkyDNS node registrator fleetd units started."
+echo "[start_jenkins_master.sh] - Jenkins master fleetd units started."
 echo "==============================================================================================="

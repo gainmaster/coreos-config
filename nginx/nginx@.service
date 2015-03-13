@@ -7,8 +7,8 @@ After=etcd.service
 Requires=docker.service
 After=docker.service
 
-Requires=nginx-register@%i.service
-Before=nginx-register@%i.service
+Requires=nginx-registrator@%i.service
+Before=nginx-registrator@%i.service
 
 [Service]
 TimeoutStartSec=0

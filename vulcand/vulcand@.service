@@ -1,11 +1,14 @@
 [Unit]
-Description=Vulancd service
+Description=Vulcand service
 
 Requires=etcd.service
 After=etcd.service
 
 Requires=docker.service
 After=docker.service
+
+Requires=vulcand-registrator@%i.service
+Before=vulcand-registrator@%i.service
 
 [Service]
 TimeoutStartSec=0

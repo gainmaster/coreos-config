@@ -13,15 +13,15 @@ RemainAfterExit=yes
 ExecStart=/usr/bin/bash -c "\
   /bin/etcdctl set /vulcand/backends/nginx/backend '{\"Type\":\"http\"}'; \
   /bin/etcdctl set /vulcand/backends/nginx/servers/nginx-%i '{\"URL\": \"http://${PRIVATE_IPV4}:%i\"}'; \
-  /bin/etcdctl set /vulcand/frontends/nginx/frontend '{\"Type\": \"http\", \"BackendId\": \"nginx\", \"Route\": \"Path(`/`)\"}'"
+  /bin/etcdctl set /vulcand/frontends/nginx/frontend '{\"Type\": \"http\", \"BackendId\": \"nginx\", \"Route\": \"Path(`/`) && Host(`hesjevik.im`)\"}'"
 
 ExecStop=/bin/etcdctl rm /vulcand/backends/nginx/servers/nginx-%i
 
 ExecStopPost=/usr/bin/bash -c "\
-  status=curl -s -I hesjevik.im | grep HTTP | awk {'print $2'} \
-  if [ $status -ne 200 ]; then \
-      /usr/bin/etcdctl rm /vulcand/backends/nginx/backend \
-      /usr/bin/etcdctl rm /vulcand/frontends/nginx/frontend \
+  NGINX_STATUS=curl -s -I hesjevik.im | grep HTTP | awk {'print $2'} \
+  if [ $NGINX_STATUS -ne 200 ]; then \
+      /usr/bin/etcdctl rm /vulcand/backends/nginx/backend; \
+      /usr/bin/etcdctl rm /vulcand/frontends/nginx/frontend; \
   fi "
 
 [X-Fleet]

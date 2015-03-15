@@ -1,14 +1,8 @@
 [Unit]
-Description=Register vulcand service id %i to SkyDNS
+Description=Register Vulcand HTTP service id %i in SkyDNS
 
 Requires=etcd.service
 After=etcd.service
-
-Requires=registrator.service
-After=registrator.service
-
-Requires=skydns.service
-After=skydns.service
 
 BindsTo=vulcand@%i.service
 After=vulcand@%i.service
@@ -17,14 +11,8 @@ After=vulcand@%i.service
 EnvironmentFile=/etc/metadata
 RemainAfterExit=yes
 
-# Start
-ExecStart=/usr/bin/bash -c "\
-    /usr/bin/etcdctl set /skydns/im/hesjevik/x%i/ '{\"Host\":\"${PUBLIC_IPV4}\"}'; \
-    /usr/bin/etcdctl set /skydns/im/hesjevik/jenkins/x%i/ '{\"Host\":\"${PUBLIC_IPV4}\"}'" 
-
-# Stop
-ExecStop=/usr/bin/bash -c "\
-    /usr/bin/etcdctl rm /skydns/im/hesjevik/x%i/ --recursive"
+ExecStart=/usr/bin/etcdctl set /skydns/im/hesjevik/services/http/vulcand-%i '{"Host": "${PUBLIC_IPV4}"}'
+ExecStop=/usr/bin/etcdctl rm /skydns/im/hesjevik/services/http/vulcand-%i"
 
 [X-Fleet]
 MachineOf=vulcand@%i.service

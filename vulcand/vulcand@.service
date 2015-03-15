@@ -1,5 +1,5 @@
 [Unit]
-Description=Vulcand service
+Description=Vulcand HTTP service
 
 Requires=etcd.service
 After=etcd.service

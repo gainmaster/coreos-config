@@ -26,7 +26,7 @@ ExecStart=/usr/bin/docker run -rm --name gainmaster-frontend-nginx.%i \
   -p ${PRIVATE_IPV4}::80 \
   -e SERVICE_NAME=gainmaster-frontend-nginx \
   -e SERVICE_ID=%i \
-  bachelorthesis/nginx 'cp -a /tmp/gainmaster/dist /srv/www'
+  bachelorthesis/nginx 'cp -a /tmp/gainmaster/dist /srv/www && /usr/sbin/nginx'
   
 ExecStartPost=/usr/bin/bash -c '\
   until (/usr/bin/etcdctl get /registrator/gainmaster-frontend-nginx/%i); do \

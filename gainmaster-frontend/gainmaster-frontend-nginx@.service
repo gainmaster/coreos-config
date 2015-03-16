@@ -1,6 +1,5 @@
 [Unit]
 Description=nginx service for Gainmaster frontend id %i
-
 Requires=etcd.service
 After=etcd.service
 
@@ -9,7 +8,7 @@ After=docker.service
 
 Requires=gainmaster-frontend-registrator@%i.service
 Before=gainmaster-frontend-registrator@%i.service
-.
+
 BindsTo=gainmaster-frontend-angular@%i.service
 After=gainmaster-frontend-angular@%i.service
 

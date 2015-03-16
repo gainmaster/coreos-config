@@ -1,0 +1,34 @@
+[Unit]
+Description=Register gainmaster frontend
+
+Requires=etcd.service
+After=etcd.service
+
+BindsTo=gainmaster-nginx@%i.service
+After=gainmaster-nginx@%i.service
+
+BindsTo=gainmaster-angular@%i.service
+After=gainmaster-angular@%i.service
+
+[Service]
+EnvironmentFile=/etc/metadata
+RemainAfterExit=yes
+
+# Start
+ExecStart=/usr/bin/etcdctl set /vulcand/backends/gainmaster-nginx/servers/gainmaster-nginx-%i '{"URL": "${NGINX_ADDRESS}"}'
+
+ExecStartPost=/usr/bin/etcdctl set /vulcand/backends/gainmaster-nginx/backend '{"Type": "http"}'
+ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/gainmaster-nginx/frontend '{"Type": "http", "BackendId": "jenkins", "Route": "Path(`/`) && Host(`hesjevik.im`)"}'
+
+#Stop
+ExecStop=/bin/etcdctl rm /vulcand/backends/nginx/servers/gainmaster-nginx-%i
+
+ExecStopPost=/usr/bin/bash -c "\
+  NGINX_STATUS=curl -s -I hesjevik.im | grep HTTP | awk {'print $2'} \
+  if [ $NGINX_STATUS -ne 200 ]; then \
+      /usr/bin/etcdctl rm /vulcand/backends/gainmaster-nginx/backend --recursive;; \
+      /usr/bin/etcdctl rm /vulcand/frontends/gainmaster-nginx/frontend --recursive;; \
+  fi "
+
+[X-Fleet]
+MachineOf=gainmaster-nginx@%i.service

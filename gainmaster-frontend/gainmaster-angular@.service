@@ -1,0 +1,32 @@
+[Unit]
+Description=AngularJS service id %i
+
+Requires=etcd.service
+After=etcd.service
+
+Requires=docker.service
+After=docker.service
+
+Requires=gainmaster-nginx@%i.service
+Before=gainmaster-nginx@%i.service
+
+Requires=gainmaster-frontend-registrator@%i.service
+Before=gainmaster-frontend-registrator@%i.service
+
+[Service]
+TimeoutStartSec=0
+KillMode=none
+EnvironmentFile=/etc/metadata
+
+ExecStartPre=-/usr/bin/docker kill  gainmaster-angular.%i
+ExecStartPre=-/usr/bin/docker rm gainmaster-angular.%i
+ExecStartPre=/usr/bin/docker pull bachelorthesis/angularjs
+
+ExecStart=/usr/bin/docker run -rm --name gainmaster-angular.%i \
+  -v /var/gainmaster/dist:/var/www/im/hesjevik/gainmaster \ 
+  bachelorthesis/angularjs
+
+ExecStop=/usr/bin/docker stop gainmaster-angular.%i
+
+[X-Fleet]
+Conflicts=gainmaster-angular@*.service

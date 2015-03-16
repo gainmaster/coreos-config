@@ -4,14 +4,15 @@ Description=Register gainmaster frontend
 Requires=etcd.service
 After=etcd.service
 
-BindsTo=gainmaster-frontend-nginx@%i.service
-After=gainmaste-frontendr-nginx@%i.service
-
 BindsTo=gainmaster-frontend-angular@%i.service
 After=gainmaster-frontend-angular@%i.service
 
+BindsTo=gainmaster-frontend-nginx@%i.service
+After=gainmaste-frontendr-nginx@%i.service
+
 [Service]
 EnvironmentFile=/etc/metadata
+EnvironmentFile=/tmp/gainmaster_frontend_env
 RemainAfterExit=yes
 
 # Start

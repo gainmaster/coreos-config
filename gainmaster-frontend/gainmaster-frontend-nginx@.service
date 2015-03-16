@@ -1,5 +1,5 @@
 [Unit]
-Description=nginx service ID %i
+Description=nginx service for Gainmaster frontend id %i
 
 Requires=etcd.service
 After=etcd.service
@@ -39,3 +39,4 @@ ExecStop=/usr/bin/docker stop gainmaster-frontend-nginx.%i
 
 [X-Fleet]
 Conflicts=gainmaster-frontend-nginx@*.service
+MachineOf=gainmaster-frontend-angular@%i.service

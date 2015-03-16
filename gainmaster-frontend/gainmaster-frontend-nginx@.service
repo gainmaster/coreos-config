@@ -9,7 +9,7 @@ After=docker.service
 
 Requires=gainmaster-frontend-registrator@%i.service
 Before=gainmaster-frontend-registrator@%i.service
-
+.
 BindsTo=gainmaster-frontend-angular@%i.service
 After=gainmaster-frontend-angular@%i.service
 
@@ -24,7 +24,7 @@ ExecStartPre=/usr/bin/docker pull bachelorthesis/nginx
 
 ExecStart=/usr/bin/docker run -rm --name gainmaster-frontend-nginx.%i \
   --volumes-from angularjs \
-  -p ${PRIVATE_IP}::80 \
+  -p ${PRIVATE_IPV4}::80 \
   -e SERVICE_NAME=gainmaster-frontend-nginx \
   -e SERVICE_ID=%i \
   bachelorthesis/nginx

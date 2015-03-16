@@ -24,7 +24,7 @@ ExecStartPre=/usr/bin/docker pull bachelorthesis/angularjs
 
 #Start
 ExecStart=/usr/bin/docker run -rm --name gainmaster-frontend-angular.%i \
-  -v /tmp/gainmaster/dist:/srv/www/im/hesjevik/gainmaster \
+  -v /tmp/gainmaster/dist \
   bachelorthesis/angularjs  
 
 #Stop

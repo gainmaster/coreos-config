@@ -23,7 +23,7 @@ ExecStartPre=-/usr/bin/docker rm gainmaster-frontend-nginx.%i
 ExecStartPre=/usr/bin/docker pull bachelorthesis/nginx
 
 ExecStart=/usr/bin/docker run -rm --name gainmaster-frontend-nginx.%i \
-  --volumes-from angularjs \
+  --volumes-from gainmaster-frontend-angular.%i \
   -p ${PRIVATE_IPV4}::80 \
   -e SERVICE_NAME=gainmaster-frontend-nginx \
   -e SERVICE_ID=%i \

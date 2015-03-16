@@ -19,7 +19,7 @@ RemainAfterExit=yes
 ExecStart=/usr/bin/etcdctl set /vulcand/backends/gainmaster/servers/gainmaster-nginx-%i '{"URL": "${NGINX_ADDRESS}"}'
 
 ExecStartPost=/usr/bin/etcdctl set /vulcand/backends/gainmaster/backend '{"Type": "http"}'
-ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/gainmaster/frontend '{"Type": "http", "BackendId": "gainmaster", "Route": "Path(`/`) && Host(`hesjevik.im`)"}'
+ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/gainmaster/frontend '{"Type": "http", "BackendId": "gainmaster", "Route": "Path(`/`) && Host(`http.services.hesjevik.im`)"}'
 
 #Stop
 ExecStop=/bin/etcdctl rm /vulcand/backends/gainmaster/servers/gainmaster-nginx-%i

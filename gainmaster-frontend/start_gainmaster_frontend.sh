@@ -10,7 +10,7 @@ echo "==========================================================================
 echo ""
 
 # Start Jenkins master fleetd unit
-fleetctl start gainmaster-angular@${1}.service gainmaster-nginx@${1}.service gainmaster-frontend-registrator@${1}.service
+fleetctl start gainmaster-frontend-angular@${1}.service gainmaster-frontend-nginx@${1}.service gainmaster-frontend-registrator@${1}.service
 
 echo ""
 echo "==============================================================================================="

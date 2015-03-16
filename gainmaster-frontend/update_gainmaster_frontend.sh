@@ -16,7 +16,7 @@ fleetctl list-units --no-legend=true | grep '^gainmaster' | awk 'NR =1 {print $1
 fleetctl list-unit-files --no-legend=true | grep '^gainmaster' | awk 'NR =1 {print $1}' | xargs -l fleetctl destroy
 
 # Insert new Jenkins master units
-fleetctl submit gainmaster-angular@.service gainmaster-nginx@.service gainmaster-registrator@.service
+fleetctl submit gainmaster-angular@.service gainmaster-nginx@.service gainmaster-frontend-registrator@.service
 
 echo ""
 echo "==============================================================================================="

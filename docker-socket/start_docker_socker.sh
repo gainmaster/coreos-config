@@ -10,7 +10,7 @@ echo "==========================================================================
 echo ""
 
 # Start Docker Socket fleetd units
-fleetctl start docker-socket.service
+fleetctl start docker-socket.socket
 
 echo ""
 echo "==============================================================================================="

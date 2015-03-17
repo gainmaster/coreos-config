@@ -77,6 +77,21 @@ coreos:
           '{"host":"158.38.57.118"}'
         Type=oneshot
 
+    - name: docker-tcp.socket
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=Docker Socket for the API
+
+        [Socket]
+        ListenStream=10.0.0.101:2375
+        BindIPv6Only=both
+        Service=docker.service
+
+        [Install]
+        WantedBy=sockets.target
+
 hostname: coreos2
 
 users:

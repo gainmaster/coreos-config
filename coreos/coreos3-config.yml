@@ -31,6 +31,21 @@ coreos:
         Where=/mnt/shared
         Type=nfs
 
+    - name: docker-tcp.socket
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=Docker Socket for the API
+
+        [Socket]
+        ListenStream=10.0.0.102:2375
+        BindIPv6Only=both
+        Service=docker.service
+
+        [Install]
+        WantedBy=sockets.target
+
 hostname: coreos3
 
 users:

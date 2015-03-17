@@ -31,20 +31,13 @@ coreos:
         Where=/mnt/shared
         Type=nfs
 
-    - name: docker-tcp.socket
+    - name: docker.socket
       command: start
-      enable: true
+      drop-ins: 
+    - name: 30-ListenStream.conf
       content: |
-        [Unit]
-        Description=Docker Socket for the API
-
         [Socket]
         ListenStream=10.0.0.102:2375
-        BindIPv6Only=both
-        Service=docker.service
-
-        [Install]
-        WantedBy=sockets.target
 
 hostname: coreos3
 

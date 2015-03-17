@@ -2,9 +2,7 @@
 Description=Docker Socket for the API
 
 [Socket]
-EnvironmentFile=/etc/metadata
-
-ListenStream=${PRIVATE_IPV4}:2375
+ListenStream=:2375
 BindIPv6Only=both
 Service=docker.service
 

@@ -1,0 +1,15 @@
+[Unit]
+Description=Docker Socket for the API
+
+[Socket]
+EnvironmentFile=/etc/metadata
+
+ListenStream=${PRIVATE_IPV4}:2375
+BindIPv6Only=both
+Service=docker.service
+
+[Install]
+WantedBy=sockets.target
+
+[X-Fleet]
+Global=true

@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
 # 
-# Start Registrator fleetd units
+# Start Docker Socket fleetd units
 #
 
 echo "==============================================================================================="
-echo "[start_registrator.sh] - Starting Registrator fleetd units."
+echo "[start_docker_socket.sh] - Starting Docker Socker fleetd units."
 echo "==============================================================================================="
 echo ""
 
-# Start Registrator fleetd units
-fleetctl start registrator.service
+# Start Docker Socket fleetd units
+fleetctl start docker-socket.service
 
 echo ""
 echo "==============================================================================================="
-echo "[start_registrator.sh] - Registrator fleetd units started."
+echo "[start_docker_socket.sh] - Docker Socket fleetd units started."
 echo "==============================================================================================="

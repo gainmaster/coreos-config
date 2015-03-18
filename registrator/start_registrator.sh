@@ -5,7 +5,7 @@
 #
 
 echo "==============================================================================================="
-echo "[start_registrator.sh] - Starting registrator fleetd units."
+echo "[start_registrator.sh] - Starting Registrator fleetd units."
 echo "==============================================================================================="
 echo ""
 

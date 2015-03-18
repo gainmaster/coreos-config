@@ -31,6 +31,14 @@ coreos:
         Where=/mnt/shared
         Type=nfs
 
+    - name: docker.socket
+      command: start
+      drop-ins: 
+      - name: 30-ListenStream.conf
+        content: |
+          [Socket]
+          ListenStream=10.0.0.102:2375
+
 hostname: coreos3
 
 users:

@@ -24,12 +24,12 @@ ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/gainmaster-webclient/front
 #Stop
 ExecStop=/bin/etcdctl rm /vulcand/backends/gainmaster-webclient/servers/nginx-%i
 
-ExecStopPost=/usr/bin/bash -c "\
-  NGINX_STATUS=curl -sI http.services.hesjevik.im | grep HTTP | awk {'print $2'}; \
+ExecStopPost=/usr/bin/bash -c '\
+  NGINX_STATUS=$(curl -sI http.services.hesjevik.im | grep HTTP | awk {'print $2'}); \
   if [ $NGINX_STATUS -ne 200 ]; then \
       /usr/bin/etcdctl rm /vulcand/backends/gainmaster-webclient --recursive; \
       /usr/bin/etcdctl rm /vulcand/frontends/gainmaster-webclient --recursive; \
-  fi "
+  fi '
 
 [X-Fleet]
 MachineOf=gainmaster-webclient-angular@%i.service

@@ -6,6 +6,9 @@ After=etcd.service
 Requires=docker.service
 After=docker.service
 
+BindsTo=gainmaster-webclient-angular@%i.service
+After=gainmaster-webclient-angular@%i.service
+
 Requires=gainmaster-webclient-registrator@%i.service
 Before=gainmaster-webclient-registrator@%i.service
 
@@ -35,3 +38,4 @@ ExecStop=/usr/bin/docker stop gainmaster-webclient-nginx.%i
 
 [X-Fleet]
 Conflicts=gainmaster-webclient-nginx@*.service
+MachineOf=gainmaster-webclient-angular@%i.service

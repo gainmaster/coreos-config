@@ -7,6 +7,9 @@ After=etcd.service
 Requires=docker.service
 After=docker.service
 
+Requires=gainmaster-webclient-nginx@%i.service
+Before=gainmaster-webclient-nginx@%i.service
+
 Requires=gainmaster-webclient-registrator@%i.service
 Before=gainmaster-webclient-registrator@%i.service
 

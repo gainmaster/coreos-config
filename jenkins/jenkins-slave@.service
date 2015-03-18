@@ -1,0 +1,36 @@
+[Unit]
+Description=Jenkins CI master service id %i
+
+Requires=etcd.service
+After=etcd.service
+
+Requires=docker.service
+After=docker.service
+
+Requires=registrator.service
+After=registrator.service
+
+Requires=jenkins-master-registrator@%i.service
+Before=jenkins-master-registrator@%i.service
+
+[Service]
+TimeoutStartSec=0
+KillMode=none
+EnvironmentFile=/etc/metadata
+
+ExecStartPre=-/usr/bin/docker kill jenkins-slave-%i
+ExecStartPre=-/usr/bin/docker rm jenkins-slave-%i
+ExecStartPre=/usr/bin/docker pull jpetazzo/dind
+
+ExecStart=/usr/bin/docker run --rm --privileged --name jenkins-slave-%i \
+  -v ${SHARED_DATA}/jenkins/master/jobs/%i/workspace:/tmp/workspace \
+  -p ${PRIVATE_IPV4}::2375 \
+  -e PORT=2375
+  -e SERVICE_NAME=jenkins-slave-%i \
+  -e SERVICE_ID=%i \
+  jpetazzo/dind
+
+ExecStop=/usr/bin/docker stop jenkins-slave-%i
+
+[X-Fleet]
+Conflicts=jenkins-master@*.service

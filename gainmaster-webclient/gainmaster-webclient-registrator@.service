@@ -1,0 +1,36 @@
+[Unit]
+Description=Register gainmaster-webclient
+
+Requires=etcd.service
+After=etcd.service
+
+BindsTo=gainmaster-webclient-angular@%i.service
+After=gainmaster-webclient-angular@%i.service
+
+BindsTo=gainmaster-webclient-nginx@%i.service
+After=gainmaste-webclient-nginx@%i.service
+
+[Service]
+EnvironmentFile=/etc/metadata
+EnvironmentFile=/tmp/gainmaster_webclient_env
+RemainAfterExit=yes
+
+# Start
+ExecStart=/usr/bin/etcdctl set /vulcand/backends/gainmaster-webclient/servers/nginx-%i '{"URL": "${NGINX_ADDRESS}"}'
+
+ExecStartPost=/usr/bin/etcdctl set /vulcand/backends/gainmaster-webclient/backend '{"Type": "http"}'
+ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/gainmaster-webclient/frontend '{"Type": "http", "BackendId": "gainmaster-webclient", "Route": "Path(`/`) && Host(`http.services.hesjevik.im`)"}'
+
+#Stop
+ExecStop=/bin/etcdctl rm /vulcand/backends/gainmaster-webclient/servers/nginx-%i
+
+ExecStopPost=/usr/bin/bash -c '\
+  NGINX_STATUS=$(curl -sI http.services.hesjevik.im | grep HTTP | awk {'print $2'}); \
+  if [ $NGINX_STATUS -ne 200 ]; then \
+      /usr/bin/etcdctl rm /vulcand/backends/gainmaster-webclient --recursive; \
+      /usr/bin/etcdctl rm /vulcand/frontends/gainmaster-webclient --recursive; \
+  fi '
+
+[X-Fleet]
+MachineOf=gainmaster-webclient-angular@%i.service
+MachineOf=gainmaster-webclient-nginx@%i.service

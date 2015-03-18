@@ -1,0 +1,34 @@
+[Unit]
+Description=AngularJS service for gainmaster-webclient id %i
+
+Requires=etcd.service
+After=etcd.service
+
+Requires=docker.service
+After=docker.service
+
+Requires=gainmaster-webclient-nginx@%i.service
+Before=gainmaster-webclient-nginx@%i.service
+
+Requires=gainmaster-webclient-registrator@%i.service
+Before=gainmaster-webclient-registrator@%i.service
+
+[Service]
+TimeoutStartSec=0
+KillMode=none
+EnvironmentFile=/etc/metadata
+
+ExecStartPre=-/usr/bin/docker kill gainmaster-webclient-angular.%i
+ExecStartPre=-/usr/bin/docker rm gainmaster-webclient-angular.%i
+ExecStartPre=/usr/bin/docker pull bachelorthesis/angularjs
+
+#Start
+ExecStart=/usr/bin/docker run -rm --name gainmaster-webclient-angular.%i \
+  -v /tmp/gainmaster-webclient/build \
+  bachelorthesis/angularjs  
+
+#Stop
+ExecStop=/usr/bin/docker stop gainmaster-webclient-angular.%i
+
+[X-Fleet]
+Conflicts=gainmaster-webclient-angular@*.service

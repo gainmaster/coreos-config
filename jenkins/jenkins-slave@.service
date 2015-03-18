@@ -21,8 +21,6 @@ ExecStartPre=/usr/bin/docker pull jpetazzo/dind
 
 ExecStart=/usr/bin/docker run --rm --privileged --name jenkins-slave-%i \
   -v ${SHARED_DATA}/jenkins/master/jobs/%i/workspace:/tmp/workspace \
-  -p ${PRIVATE_IPV4}::2375 \
-  -e PORT=2375 \
   -e SERVICE_NAME=jenkins-slave \
   -e SERVICE_ID=%i \
   -w="/tmp/workspace" \

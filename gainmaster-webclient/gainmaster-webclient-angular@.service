@@ -24,7 +24,7 @@ ExecStartPre=/usr/bin/docker pull bachelorthesis/gainmaster-webclient
 
 #Start
 ExecStart=/usr/bin/docker run -rm --name gainmaster-webclient-angular.%i \
-  -v /srv/http:ro \
+  -v /srv/http \
   bachelorthesis/gainmaster-webclient  
 
 #Stop

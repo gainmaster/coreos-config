@@ -17,16 +17,16 @@ EnvironmentFile=/etc/metadata
 
 ExecStartPre=-/usr/bin/docker kill jenkins-slave-%i
 ExecStartPre=-/usr/bin/docker rm jenkins-slave-%i
-ExecStartPre=/usr/bin/docker pull bachelorthesis/dind
+ExecStartPre=/usr/bin/docker pull bachelorthesis/jenkins:slave
 
 ExecStart=/usr/bin/docker run --rm -i --privileged --name jenkins-slave-%i \
-  -v ${SHARED_DATA}/jenkins/master/jobs/%i/workspace:/tmp/workspace \
+  -v ${SHARED_DATA}/jenkins/master/jobs/%i/workspace:/opt/jenkins-workspace \
   -e SERVICE_NAME=jenkins-slave \
   -e SERVICE_ID=%i \
   -e PORT=2375 \
   -p ${PRIVATE_IPV4}::2375 \
-  -w="/tmp/workspace" \
-  bachelorthesis/dind
+  -w="/opt/jenkins-workspace" \
+  bachelorthesis/jenkins:slave
 
 ExecStop=/usr/bin/docker stop jenkins-slave-%i
 

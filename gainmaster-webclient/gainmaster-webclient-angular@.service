@@ -15,17 +15,17 @@ Before=gainmaster-webclient-registrator@%i.service
 
 [Service]
 TimeoutStartSec=0
-KillMode=none
 EnvironmentFile=/etc/metadata
+RemainAfterExit=yes
 
 ExecStartPre=-/usr/bin/docker kill gainmaster-webclient-angular.%i
 ExecStartPre=-/usr/bin/docker rm gainmaster-webclient-angular.%i
-ExecStartPre=/usr/bin/docker pull bachelorthesis/angularjs
+ExecStartPre=/usr/bin/docker pull bachelorthesis/gainmaster-webclient
 
 #Start
 ExecStart=/usr/bin/docker run -rm --name gainmaster-webclient-angular.%i \
-  -v /tmp/gainmaster-webclient/build \
-  bachelorthesis/angularjs  
+  -v /srv/http \
+  bachelorthesis/gainmaster-webclient  
 
 #Stop
 ExecStop=/usr/bin/docker stop gainmaster-webclient-angular.%i

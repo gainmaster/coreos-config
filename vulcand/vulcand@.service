@@ -22,6 +22,7 @@ ExecStartPre=/usr/bin/docker pull mailgun/vulcand:v0.8.0-beta.2
 ExecStart=/usr/bin/docker run --rm --name vulcand \
   -p 80:80 \
   mailgun/vulcand:v0.8.0-beta.2 \
+  /go/bin/vulcand \
   -port=80 \
   --etcd=http://${PRIVATE_IPV4}:4001
 

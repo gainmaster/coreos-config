@@ -1,0 +1,40 @@
+[Unit]
+Description=Gainmaster Account Service service id %i
+
+Requires=etcd.service
+After=etcd.service
+
+Requires=docker.service
+After=docker.service
+
+Requires=registrator.service
+After=registrator.service
+
+Requires=gainmaster-account-service-registrator@%i.service
+Before=gainmaster-account-service-registrator@%i.service
+
+[Service]
+TimeoutStartSec=0
+KillMode=none
+EnvironmentFile=/etc/metadata
+
+ExecStartPre=-/usr/bin/docker kill jenkins-master
+ExecStartPre=-/usr/bin/docker rm jenkins-master
+ExecStartPre=/usr/bin/docker pull bachelorthesis/jenkins
+
+ExecStart=/usr/bin/docker run --rm --privileged --name gainmaster-account-service \
+  -p ${PRIVATE_IPV4}::8080 \
+  -e SERVICE_NAME=gainmaster-account-service \
+  -e SERVICE_ID=%i \
+  bachelorthesis/gainmaster-account-service
+
+ExecStartPost=/usr/bin/bash -c '\
+  until (/usr/bin/etcdctl get /registrator/gainmaster-account-service/%i); do \
+    sleep 3; \
+  done; \
+  echo SERVICE_ADDRESS=http://$(/usr/bin/etcdctl get /registrator/gainmaster-account-service/%i) > /tmp/gainmaster_account_service_env'
+
+ExecStop=/usr/bin/docker stop gainmaster-account-service
+
+[X-Fleet]
+Conflicts=gainmaster-account-service@*.service

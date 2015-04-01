@@ -15,8 +15,8 @@ RemainAfterExit=yes
 # Start
 ExecStart=/usr/bin/etcdctl set /vulcand/backends/gainmaster-account-service/servers/%i '{"URL": "${SERVICE_ADDRESS}"}'
 
-ExecStartPost=/usr/bin/etcdctl set /vulcand/backends/jenkins/backend '{"Type": "http"}'
-ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/jenkins/frontend '{"Type": "http", "BackendId": "gainmaster-account-service", "Route": "Host(`api.hesjevik.im`) && PathRegexp(`/accounts/.*`)"}'
+ExecStartPost=/usr/bin/etcdctl set /vulcand/backends/gainmaster-account-service/backend '{"Type": "http"}'
+ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/gainmaster-account-service/frontend '{"Type": "http", "BackendId": "gainmaster-account-service", "Route": "Host(`api.hesjevik.im`) && PathRegexp(`/accounts/.*`)"}'
 
 # Stop
 ExecStop=/bin/etcdctl rm /vulcand/backends/gainmaster-account-service/servers/%i 

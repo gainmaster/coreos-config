@@ -18,9 +18,9 @@ TimeoutStartSec=0
 KillMode=none
 EnvironmentFile=/etc/metadata
 
-ExecStartPre=-/usr/bin/docker kill jenkins-master
-ExecStartPre=-/usr/bin/docker rm jenkins-master
-ExecStartPre=/usr/bin/docker pull bachelorthesis/jenkins
+ExecStartPre=-/usr/bin/docker kill gainmaster-account-service
+ExecStartPre=-/usr/bin/docker rm gainmaster-account-service
+ExecStartPre=/usr/bin/docker pull bachelorthesis/gainmaster-account-service
 
 ExecStart=/usr/bin/docker run --rm --privileged --name gainmaster-account-service \
   -p ${PRIVATE_IPV4}::8080 \

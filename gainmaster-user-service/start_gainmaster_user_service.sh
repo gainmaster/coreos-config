@@ -10,7 +10,7 @@ echo "==========================================================================
 echo ""
 
 # Start Gainmaster User Service fleetd unit
-fleetctl start gainmaster-user-service@${1}.service gainmaster-user-service-registrator@${1}.service
+fleetctl start gainmaster-user-service@${1}.service gainmaster-user-service-vulcand-registrator@${1}.service
 
 echo ""
 echo "==============================================================================================="

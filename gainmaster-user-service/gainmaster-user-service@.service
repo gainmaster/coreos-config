@@ -1,0 +1,40 @@
+[Unit]
+Description=Gainmaster User Service id %i
+
+Requires=etcd.service
+After=etcd.service
+
+Requires=docker.service
+After=docker.service
+
+Requires=registrator.service
+After=registrator.service
+
+Requires=gainmaster-user-service-registrator@%i.service
+Before=gainmaster-user-service-registrator@%i.service
+
+[Service]
+TimeoutStartSec=0
+KillMode=none
+EnvironmentFile=/etc/metadata
+
+ExecStartPre=-/usr/bin/docker kill gainmaster-user-service
+ExecStartPre=-/usr/bin/docker rm gainmaster-user-service
+ExecStartPre=/usr/bin/docker pull bachelorthesis/gainmaster-user-service
+
+ExecStart=/usr/bin/docker run --name gainmaster-user-service \
+  -p ${PRIVATE_IPV4}::8080 \
+  -e SERVICE_NAME=gainmaster-user-service \
+  -e SERVICE_ID=%i \
+  bachelorthesis/gainmaster-user-service
+
+ExecStartPost=/usr/bin/bash -c '\
+  until (/usr/bin/etcdctl get /registrator/gainmaster-account-service/%i); do \
+    sleep 3; \
+  done; \
+  echo SERVICE_ADDRESS=http://$(/usr/bin/etcdctl get /registrator/gainmaster-user-service/%i) > /tmp/gainmaster_user_service_env'
+
+ExecStop=/usr/bin/docker stop gainmaster-user-service
+
+[X-Fleet]
+Conflicts=gainmaster-user-service@*.service

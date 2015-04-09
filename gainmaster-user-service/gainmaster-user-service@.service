@@ -10,8 +10,8 @@ After=docker.service
 Requires=registrator.service
 After=registrator.service
 
-Requires=gainmaster-user-service-registrator@%i.service
-Before=gainmaster-user-service-registrator@%i.service
+Requires=gainmaster-user-service-vulcand-registrator@%i.service
+Before=gainmaster-user-service-vulcand-registrator@%i.service
 
 [Service]
 TimeoutStartSec=0

@@ -15,7 +15,7 @@ RemainAfterExit=yes
 ExecStart=/usr/bin/etcdctl set /vulcand/backends/gainmaster-user-service/servers/%i '{"URL": "${SERVICE_ADDRESS}"}'
 
 ExecStartPost=/usr/bin/etcdctl set /vulcand/backends/gainmaster-user-service/backend '{"Type": "http"}'
-ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/gainmaster-user-service/frontend '{"Type": "http", "BackendId": "gainmaster-user-service", "Route": "Host(`api.hesjevik.im`) && PathRegexp(`/users.*`)"}'
+ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/gainmaster-user-service/frontend '{"Type": "http", "BackendId": "gainmaster-user-service", "Route": "Host(`api.hesjevik.im`) && PathRegexp(`/users(.*)`)"}'
 
 ExecStop=/bin/etcdctl rm /vulcand/backends/gainmaster-user-service/servers/%i 
 

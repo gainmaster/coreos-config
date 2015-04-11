@@ -1,0 +1,30 @@
+[Unit]
+Description=Register Gainmaster User Measurement Service service instance %i to Vulcand
+
+Requires=etcd.service
+After=etcd.service
+
+BindsTo=gainmaster-user-measurement-service@%i.service
+After=gainmaster-user-measurement-service@%i.service
+
+[Service]
+EnvironmentFile=/etc/metadata
+EnvironmentFile=/tmp/gainmaster_user_measurement_service_env
+RemainAfterExit=yes
+
+ExecStart=/usr/bin/etcdctl set /vulcand/backends/gainmaster-user-measurement-service/servers/%i '{"URL": "${SERVICE_ADDRESS}"}'
+
+ExecStartPost=/usr/bin/etcdctl set /vulcand/backends/gainmaster-user-measurement-service/backend '{"Type": "http"}'
+ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/gainmaster-user-measurement-service/frontend '{"Type": "http", "BackendId": "gainmaster-user-measurement-service", "Route": "Host(`api.hesjevik.im`) && PathRegexp(`/users(.*)/measurements(.*)`)"}'
+
+ExecStop=/bin/etcdctl rm /vulcand/backends/gainmaster-user-measurement-service/servers/%i 
+
+ExecStopPost=/usr/bin/bash -c '\
+  SERVICE_STATUS=$(curl -f -s -I api.hesjevik.im/users | grep HTTP/1.1); \
+  if [ -z "$SERVICE_STATUS" ]; then \
+      /usr/bin/etcdctl rm /vulcand/backends/gainmaster-user-measurement-service --recursive; \
+      /usr/bin/etcdctl rm /vulcand/frontends/gainmaster-user-measurement-service --recursive; \
+  fi'
+
+[X-Fleet]
+MachineOf=gainmaster-user-measurement-service@%i.service

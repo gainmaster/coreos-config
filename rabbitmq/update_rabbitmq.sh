@@ -16,7 +16,7 @@ fleetctl list-units --no-legend=true | grep '^rabbitmq' | awk 'NR =1 {print $1}'
 fleetctl list-unit-files --no-legend=true | grep '^rabbitmq' | awk 'NR =1 {print $1}' | xargs -l fleetctl destroy
 
 # Insert new Vulcand units
-fleetctl submit rabbitmq@.service rabbitmq-registrator@.service
+fleetctl submit rabbitmq@.service
 
 echo ""
 echo "==============================================================================================="

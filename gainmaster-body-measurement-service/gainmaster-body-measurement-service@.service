@@ -1,0 +1,40 @@
+[Unit]
+Description=Gainmaster Body Measurement Service instance %i
+
+Requires=etcd.service
+After=etcd.service
+
+Requires=docker.service
+After=docker.service
+
+Requires=registrator.service
+After=registrator.service
+
+Requires=gainmaster-body-measurement-service-vulcand-registrator@%i.service
+Before=gainmaster-body-measurement-service-vulcand-registrator@%i.service
+
+[Service]
+TimeoutStartSec=0
+KillMode=none
+EnvironmentFile=/etc/metadata
+
+ExecStartPre=-/usr/bin/docker kill gainmaster-body-measurement-service
+ExecStartPre=-/usr/bin/docker rm gainmaster-body-measurement-service
+ExecStartPre=/usr/bin/docker pull bachelorthesis/gainmaster-body-measurement-service
+
+ExecStart=/usr/bin/docker run --name gainmaster-body-measurement-service \
+  -p ${PRIVATE_IPV4}::8080 \
+  -e SERVICE_NAME=gainmaster-body-measurement-service \
+  -e SERVICE_ID=%i \
+  bachelorthesis/gainmaster-body-measurement-service
+
+ExecStartPost=/usr/bin/bash -c '\
+  until (etcdctl get /registrator/gainmaster-body-measurement-service/%i); do \
+    sleep 3; \
+  done; \
+  echo SERVICE_ADDRESS=http://$(etcdctl get /registrator/gainmaster-body-measurement-service/%i) > /tmp/gainmaster_body_measurement_service_env'
+
+ExecStop=/usr/bin/docker stop gainmaster-body-measurement-service
+
+[X-Fleet]
+Conflicts=gainmaster-body-measurement-service@*.service

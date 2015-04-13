@@ -1,0 +1,32 @@
+[Unit]
+Description=Register Gainmaster OAuth Service instance %i to Vulcand
+
+Requires=etcd.service
+After=etcd.service
+
+BindsTo=gainmaster-oauth-service@%i.service
+After=gainmaster-oauth-service@%i.service
+
+[Service]
+EnvironmentFile=/etc/metadata
+EnvironmentFile=/tmp/gainmaster_oauth_service_env
+RemainAfterExit=yes
+
+ExecStart=/usr/bin/etcdctl set /vulcand/backends/gainmaster-oauth-service/servers/%i '{"URL": "${SERVICE_ADDRESS}"}'
+
+ExecStartPost=/usr/bin/etcdctl set /vulcand/backends/gainmaster-oauth-service/backend '{"Type": "http"}'
+ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/gainmaster-oauth-service/frontend '{"Type": "http", "BackendId": "gainmaster-oauth-service", "Route": "Host(`api.hesjevik.im`) && PathRegexp(`/oauth/(.*)`)"}'
+
+ExecStop=/bin/etcdctl rm /vulcand/backends/gainmaster-oauth-service/servers/%i 
+
+ExecStopPost=/usr/bin/bash -c '\
+  SERVICE_INSTANCES=$(etcdctl ls /registrator/gainmaster-oauth-service | wc -l)
+  if [ $SERVICE_INSTANCES -eq 0 ]; then \
+      etcdctl rm /vulcand/backends/gainmaster-oauth-service --recursive; \
+      etcdctl rm /vulcand/frontends/gainmaster-oauth-service --recursive; \
+      etcdctl rm /registrator/gainmaster-oauth-service --recursive; \
+  fi'
+ExecStopPost=/usr/bin/rm /tmp/gainmaster_oauth_service_env
+
+[X-Fleet]
+MachineOf=gainmaster-oauth-service@%i.service

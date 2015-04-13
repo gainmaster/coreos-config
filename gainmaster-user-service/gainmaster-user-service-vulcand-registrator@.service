@@ -1,5 +1,5 @@
 [Unit]
-Description=Register Gainmaster User Service service id %i to Vulcand
+Description=Register Gainmaster User Service instance %i to Vulcand
 
 Requires=etcd.service
 After=etcd.service
@@ -20,10 +20,11 @@ ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/gainmaster-user-service/fr
 ExecStop=/bin/etcdctl rm /vulcand/backends/gainmaster-user-service/servers/%i 
 
 ExecStopPost=/usr/bin/bash -c '\
-  SERVICE_STATUS=$(curl -f -s -I api.hesjevik.im/users | grep HTTP/1.1); \
-  if [ -z "$SERVICE_STATUS" ]; then \
-      /usr/bin/etcdctl rm /vulcand/backends/gainmaster-user-service --recursive; \
-      /usr/bin/etcdctl rm /vulcand/frontends/gainmaster-user-service --recursive; \
+  SERVICE_INSTANCES=$(etcdctl ls /registrator/gainmaster-user-service | wc -l)
+  if [ $SERVICE_INSTANCES -eq 0 ]; then \
+      etcdctl rm /vulcand/backends/gainmaster-user-service --recursive; \
+      etcdctl rm /vulcand/frontends/gainmaster-user-service --recursive; \
+      etcdctl rm /registrator/gainmaster-oauth-service --recursive; \
   fi'
 
 [X-Fleet]

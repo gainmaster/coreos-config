@@ -1,5 +1,5 @@
 [Unit]
-Description=Gainmaster User Service id %i
+Description=Gainmaster User Service instance %i
 
 Requires=etcd.service
 After=etcd.service

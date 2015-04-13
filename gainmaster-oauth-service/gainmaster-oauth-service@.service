@@ -1,0 +1,40 @@
+[Unit]
+Description=Gainmaster OAuth Service instance %i
+
+Requires=etcd.service
+After=etcd.service
+
+Requires=docker.service
+After=docker.service
+
+Requires=registrator.service
+After=registrator.service
+
+Requires=gainmaster-oauth-service-vulcand-registrator@%i.service
+Before=gainmaster-oauth-service-vulcand-registrator@%i.service
+
+[Service]
+TimeoutStartSec=0
+KillMode=none
+EnvironmentFile=/etc/metadata
+
+ExecStartPre=-/usr/bin/docker kill gainmaster-oauth-service
+ExecStartPre=-/usr/bin/docker rm gainmaster-oauth-service
+ExecStartPre=/usr/bin/docker pull bachelorthesis/gainmaster-oauth-service
+
+ExecStart=/usr/bin/docker run --name gainmaster-oauth-service \
+  -p ${PRIVATE_IPV4}::8080 \
+  -e SERVICE_NAME=gainmaster-oauth-service \
+  -e SERVICE_ID=%i \
+  bachelorthesis/gainmaster-oauth-service
+
+ExecStartPost=/usr/bin/bash -c '\
+  until (etcdctl get /registrator/gainmaster-oauth-service/%i); do \
+    sleep 3; \
+  done; \
+  echo SERVICE_ADDRESS=http://$(etcdctl get /registrator/gainmaster-oauth-service/%i) > /tmp/gainmaster_oauth_service_env'
+
+ExecStop=/usr/bin/docker stop gainmaster-oauth-service
+
+[X-Fleet]
+Conflicts=gainmaster-oauth-service@*.service

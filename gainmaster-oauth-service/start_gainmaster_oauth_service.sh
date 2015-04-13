@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 
 # 
-# Start Gainmaster User Service instances
+# Start Gainmaster OAuth Service instance
 #
 
 echo "==============================================================================================="
-echo "[start_gainmaster_user_measurement_service.sh] - Starting service instance."
+echo "[start_gainmaster_oauth_service.sh] - Starting service instance."
 echo "==============================================================================================="
 echo ""
 
-# Start fleet unit
+# Start units
 fleetctl start \
-    gainmaster-user-measurement-service@${1}.service \
-    gainmaster-user-measurement-service-vulcand-registrator@${1}.service
+    gainmaster-oauth-service@${1}.service \
+    gainmaster-oauth-service-vulcand-registrator@${1}.service
 
 echo ""
 echo "==============================================================================================="
-echo "[start_gainmaster_user_measurement_service.sh] - Service instance started."
+echo "[start_gainmaster_oauth_service.sh] - Service instance started."
 echo "==============================================================================================="

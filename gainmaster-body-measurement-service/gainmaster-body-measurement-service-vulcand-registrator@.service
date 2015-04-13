@@ -20,7 +20,7 @@ ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/gainmaster-body-measuremen
 ExecStop=/bin/etcdctl rm /vulcand/backends/gainmaster-body-measurement-service/servers/%i 
 
 ExecStopPost=/usr/bin/bash -c '\
-  SERVICE_INSTANCES=$(etcdctl ls /registrator/gainmaster-body-measurement-service | wc -l)
+  SERVICE_INSTANCES=$(etcdctl ls /registrator/gainmaster-body-measurement-service | wc -l); \
   if [ $SERVICE_INSTANCES -eq 0 ]; then \
       etcdctl rm /vulcand/backends/gainmaster-body-measurement-service --recursive; \
       etcdctl rm /vulcand/frontends/gainmaster-body-measurement-service --recursive; \

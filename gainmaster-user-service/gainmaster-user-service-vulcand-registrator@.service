@@ -20,7 +20,7 @@ ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/gainmaster-user-service/fr
 ExecStop=/bin/etcdctl rm /vulcand/backends/gainmaster-user-service/servers/%i 
 
 ExecStopPost=/usr/bin/bash -c '\
-  SERVICE_INSTANCES=$(etcdctl ls /registrator/gainmaster-user-service | wc -l)
+  SERVICE_INSTANCES=$(etcdctl ls /registrator/gainmaster-user-service | wc -l); \
   if [ $SERVICE_INSTANCES -eq 0 ]; then \
       etcdctl rm /vulcand/backends/gainmaster-user-service --recursive; \
       etcdctl rm /vulcand/frontends/gainmaster-user-service --recursive; \

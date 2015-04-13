@@ -17,8 +17,8 @@ fleetctl list-unit-files --no-legend=true --fields=unit | grep '^gainmaster-body
 
 # Insert new units
 fleetctl submit \
-    gainmaster-user-measurement-service@.service \
-    gainmaster-user-measurement-service-vulcand-registrator@.service
+    gainmaster-body-measurement-service@.service \
+    gainmaster-body-measurement-service-vulcand-registrator@.service
 
 echo ""
 echo "==============================================================================================="

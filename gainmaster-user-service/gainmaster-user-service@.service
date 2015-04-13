@@ -29,10 +29,10 @@ ExecStart=/usr/bin/docker run --name gainmaster-user-service \
   bachelorthesis/gainmaster-user-service
 
 ExecStartPost=/usr/bin/bash -c '\
-  until (/usr/bin/etcdctl get /registrator/gainmaster-user-service/%i); do \
+  until (etcdctl get /registrator/gainmaster-user-service/%i); do \
     sleep 3; \
   done; \
-  echo SERVICE_ADDRESS=http://$(/usr/bin/etcdctl get /registrator/gainmaster-user-service/%i) > /tmp/gainmaster_user_service_env'
+  echo SERVICE_ADDRESS=http://$(etcdctl get /registrator/gainmaster-user-service/%i) > /tmp/gainmaster_user_service_env'
 
 ExecStop=/usr/bin/docker stop gainmaster-user-service
 

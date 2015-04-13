@@ -10,7 +10,7 @@ echo "==========================================================================
 echo ""
 
 # Start Vulcand fleetd unit
-fleetctl start rabbitmq@${1}.service rabbitmq-registrator@${1}.service
+fleetctl start rabbitmq@${1}.service
 
 echo ""
 echo "==============================================================================================="

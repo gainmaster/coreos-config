@@ -11,8 +11,8 @@ Requires=registrator.service
 After=registrator.service
 
 [Service]
-TimeoutStartSec=0
-KillMode=none
+TimeoutStartSec=5m
+StandardInput=tty-force
 EnvironmentFile=/etc/metadata
 
 ExecStartPre=-/usr/bin/docker kill jenkins-slave-%i

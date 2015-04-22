@@ -1,0 +1,36 @@
+[Unit]
+Description=SkyDNS service
+
+Requires=etcd.service
+After=etcd.service
+
+Requires=docker.service
+After=docker.service
+
+[Service]
+TimeoutStartSec=0
+KillMode=none
+
+EnvironmentFile=/etc/coreos_metadata
+EnvironmentFile=/etc/gainmaster_metadata
+
+ExecStartPre=-/usr/bin/docker kill skydns
+ExecStartPre=-/usr/bin/docker rm skydns
+ExecStartPre=/usr/bin/docker pull skynetservices/skydns
+
+ExecStartPre=/usr/bin/etcdctl set "/skydns/$GAINMASTER_SKYDNS_DOMAIN_PATH/dns/ns2" '{"host":"$PUBLIC_IPV4"}'
+
+ExecStart=/usr/bin/docker run --rm --name skydns-ns2 \
+    -e "ETCD_MACHINES=http://$PRIVATE_IPV4:4001" \
+    -e "SKYDNS_ADDR=0.0.0.0:53" \
+    -e "SKYDNS_DOMAIN=$GAINMASTER_DOMAIN" \
+    -e "SKYDNS_NAMESERVERS=" \
+    -p 53:53/udp \
+    -p 53:53/tcp \
+    --dns=127.0.0.1 \
+    skynetservices/skydns
+
+ExecStop=/usr/bin/docker stop skydns
+
+[X-Fleet]
+MachineMetadata=name=coreos2

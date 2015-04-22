@@ -21,7 +21,7 @@ ExecStartPre=/usr/bin/docker pull mailgun/vulcand:v0.8.0-beta.3
 
 ExecStart=/usr/bin/docker run --rm --name vulcand \
   -e SERVICE_NAME=vulcand \
-  -e SERVICE_ID=%1 \
+  -e SERVICE_ID=%i \
   -p 80:80 \
   mailgun/vulcand:v0.8.0-beta.3 \
   /go/bin/vulcand \

@@ -8,8 +8,6 @@ BindsTo=jenkins-master@%i.service
 After=jenkins-master@%i.service
 
 [Service]
-TimeoutStopSec=50s
-
 EnvironmentFile=/etc/coreos_metadata
 EnvironmentFile=/etc/gainmaster_metadata
 EnvironmentFile=/tmp/jenkins_master_env_%i
@@ -30,15 +28,7 @@ ExecStart=/usr/bin/bash -c "\
 
 ExecStop=/usr/bin/bash -c "\
     etcdctl rm /vulcand/backends/jenkins-master/servers/%i; \
-    rm /tmp/jenkins_master_env_%i; \
-    while (etcdctl get /registrator/jenkins-master/%i); do \
-        sleep 3; \
-    done; \
-    if [ $(etcdctl ls /registrator/jenkins-master | wc -l) -eq 0 ]; then \
-        etcdctl rm /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/ci --recursive; \
-        etcdctl rm /vulcand/backends/jenkins-master --recursive; \
-        etcdctl rm /vulcand/frontends/jenkins-master --recursive; \
-    fi"
+    rm /tmp/jenkins_master_env_%i"
 
 [X-Fleet]
 MachineOf=jenkins-master@%i.service

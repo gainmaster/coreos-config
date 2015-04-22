@@ -14,7 +14,7 @@ Before=jenkins-master-registrator@%i.service
 TimeoutStartSec=10m
 KillMode=none
 Restart=always
-RestartSec=1m
+RestartSec=10s
 
 EnvironmentFile=/etc/coreos_metadata
 

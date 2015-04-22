@@ -13,7 +13,7 @@ Before=vulcand-registrator@%i.service
 [Service]
 TimeoutStartSec=10m
 KillMode=none
-EnvironmentFile=/etc/metadata
+EnvironmentFile=/etc/coreos_metadata
 
 ExecStartPre=-/usr/bin/docker kill vulcand-%i
 ExecStartPre=-/usr/bin/docker rm vulcand-%i

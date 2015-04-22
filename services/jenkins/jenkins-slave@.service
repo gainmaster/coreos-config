@@ -21,7 +21,7 @@ ExecStartPre=/usr/bin/docker pull bachelorthesis/jenkins:slave
 ExecStart=/usr/bin/docker run --rm -i --privileged --name jenkins-slave-%i \
     -v ${SHARED_DATA}/jenkins/master/jobs/%i/workspace:/jenkins-workspace \
     -v /usr/bin/docker:/usr/bin/docker \
-    -v /usr/libexec/dockerinit:/usr/libexec/dockerinit \
+    -v /usr/libexec/docker/dockerinit:/usr/libexec/docker/dockerinit \
     -e SERVICE_NAME=jenkins-slave \
     -e SERVICE_ID=%i \
     -e PORT=2375 \

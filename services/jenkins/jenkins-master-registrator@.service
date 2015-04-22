@@ -18,12 +18,13 @@ ExecStart=/usr/bin/bash -c "\
         sleep 3; \
     done; \
     while true; do \
-        curl -f http://$(etcdctl get /registrator/jenkins-master/%i); \
+        SERVICE_ADDRESS=http://$(etcdctl get /registrator/jenkins-master/%i); \
+        curl -f \$SERVICE_ADDRESS; \
         if [ $? -ne 7 ]; then \
             etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/ci/node '{\"host\": \"http.service.${GAINMASTER_DOMAIN}\"}' --ttl 30; \
             etcdctl set /vulcand/frontends/jenkins-master/frontend '{\"Type\": \"http\", \"BackendId\": \"jenkins-master\", \"Route\": \"Host(`ci.${GAINMASTER_DOMAIN}`)\"}' --ttl 30; \
             etcdctl set /vulcand/backends/jenkins-master/backend '{\"Type\": \"http\"}' --ttl 30; \
-            etcdctl set /vulcand/backends/jenkins-master/servers/%i '{\"URL\": \"http://$(etcdctl get /registrator/jenkins-master/%i)\"}' --ttl 30; \
+            etcdctl set /vulcand/backends/jenkins-master/servers/%i '{\"URL\": \"http:\$SERVICE_ADDRESS\"}' --ttl 30; \
         else \
             etcdctl rm /vulcand/backends/jenkins-master/servers/%i; \
         fi; \

@@ -14,8 +14,8 @@ KillMode=none
 EnvironmentFile=/etc/coreos_metadata
 EnvironmentFile=/etc/gainmaster_metadata
 
-ExecStartPre=-/usr/bin/docker kill skydns
-ExecStartPre=-/usr/bin/docker rm skydns
+ExecStartPre=-/usr/bin/docker kill skydns-ns2
+ExecStartPre=-/usr/bin/docker rm skydns-ns2
 ExecStartPre=/usr/bin/docker pull skynetservices/skydns
 
 ExecStartPre=/usr/bin/etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/dns/ns '{"host":"${PUBLIC_IPV4}"}'
@@ -30,7 +30,7 @@ ExecStart=/usr/bin/docker run --rm --name skydns-ns2 \
     --dns=127.0.0.1 \
     skynetservices/skydns
 
-ExecStop=/usr/bin/docker stop skydns
+ExecStop=/usr/bin/docker stop skydns-ns2
 
 [X-Fleet]
 MachineMetadata=name=coreos2

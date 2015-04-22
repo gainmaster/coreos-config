@@ -27,7 +27,7 @@ ExecStart=/usr/bin/docker run --rm -i --privileged --name jenkins-slave-%i \
     -e PORT=2375 \
     -p ${PRIVATE_IPV4}::2375 \
     -w="/jenkins-workspace" \
-    bachelorthesis/jenkins:slave
+    gainmaster/jenkins:slave
 
 ExecStop=/usr/bin/docker stop jenkins-slave-%i
 

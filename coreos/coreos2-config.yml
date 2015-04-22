@@ -1,146 +1,100 @@
 #cloud-config
 
 coreos:
-  etcd:
-    name: coreos2
-    # generate a new token for each unique cluster from https://discovery.etcd.io/new
-    discovery: https://discovery.etcd.io/7863b680910e37870334ae19594de26c
-    addr: 10.0.0.101:4001       # For client communication
-    peer-addr: 10.0.0.101:7001  # For server communication
-  fleet:
-    public-ip: 10.0.0.101
-  update:
-    reboot-strategy: etcd-lock
-    group: stable
-  units:
-    - name: etcd.service
-      command: start
 
-    - name: fleet.service
-      command: start
+    etcd:
+        name     : coreos2
+        discovery: https://discovery.etcd.io/7863b680910e37870334ae19594de26c
+        addr     : 10.0.0.101:4001
+        peer-addr: 10.0.0.101:7001
 
-    - name: rpc-statd.service
-      command: start
-      enable: true
+    fleet:
+        public-ip: 10.0.0.101
+        metadata : 'location=hist,public=true,name=coreos2,role=gainmaster'
 
-    - name: mnt-shared.mount
-      command: start
-      content: |
-        [Mount]
-        What=10.0.0.20:/
-        Where=/mnt/shared
-        Type=nfs
+    update:
+        reboot-strategy: etcd-lock
+        group          : stable
 
-    - name: skydns.service
-      command: start
-      content: |
-        [Unit]
-        Description=SkyDNS service
+    units:
+        - name   : etcd.service
+          command: start
 
-        Requires=etcd.service
-        After=etcd.service
+        - name   : fleet.service
+          command: start
 
-        Requires=docker.service
-        After=docker.service
+        - name   : rpc-statd.service
+          command: start
+          enable : true
 
-        [Service]
-        TimeoutStartSec=0
-        KillMode=none
-
-        ExecStartPre=-/usr/bin/docker kill skydns
-        ExecStartPre=-/usr/bin/docker rm skydns
-        ExecStartPre=/usr/bin/docker pull skynetservices/skydns
-
-        ExecStart=/usr/bin/docker run --rm --name skydns \
-          -e "ETCD_MACHINES=http://10.0.0.101:4001" \
-          -e "SKYDNS_ADDR=0.0.0.0:53" \
-          -e "SKYDNS_DOMAIN=hesjevik.im" \
-          -e "SKYDNS_NAMESERVERS=" \
-          -p 53:53/udp \
-          -p 53:53/tcp \
-          --dns=127.0.0.1 \
-          skynetservices/skydns
-
-        ExecStop=/usr/bin/docker stop skydns
-
-    - name: skydns-register-dns-ns2.service
-      command: start
-      content: |
-        [Unit]
-        Description=Registers this server as NS in SkyDNS config
-
-        Requires=etcd.service
-        After=etcd.service
-
-        [Service]
-        ExecStart=/usr/bin/etcdctl set /skydns/im/hesjevik/dns/ns2 \
-          '{"host":"158.38.57.118"}'
-        Type=oneshot
-
-    - name: docker.socket
-      command: start
-      drop-ins: 
-      - name: 30-ListenStream.conf
-        content: |
-          [Socket]
-          ListenStream=10.0.0.101:2375
+        - name   : mnt-shared.mount
+          command: start
+          content: |
+              [Mount]
+              What=10.0.0.20:/
+              Where=/mnt/shared
+              Type=nfs
 
 hostname: coreos2
 
 users:
-  - name: tony
-    gecos: Tony Hesjevik
-    coreos-ssh-import-github: feskehau
-    groups:
-      - sudo
-      - docker
+    - name : tony
+      gecos: Tony Hesjevik
+      coreos-ssh-import-github: feskehau
+      groups:
+          - sudo
+          - docker
 
-  - name: andreas
-    gecos: Andreas Hopen
-    coreos-ssh-import-github: hopeeen
-    groups:
-      - sudo
-      - docker
+    - name : andreas
+      gecos: Andreas Hopen
+      coreos-ssh-import-github: hopeeen
+      groups:
+          - sudo
+          - docker
 
-  - name: knut
-    gecos: Knut Lorvik
-    coreos-ssh-import-github: superlorre
-    groups:
-      - sudo
-      - docker
+    - name : knut
+      gecos: Knut Lorvik
+      coreos-ssh-import-github: superlorre
+      groups:
+          - sudo
+          - docker
 
 write_files:
-  - path: /etc/systemd/network/public.network
-    permissions: 0644
-    owner: root
-    content: |
-      [Match]
-      MACAddress=00:50:56:bb:4c:30
+    - path       : /etc/systemd/network/public.network
+      permissions: 0644
+      owner      : root
+      content    : |
+          [Match]
+          MACAddress=00:50:56:bb:4c:30
+          [Network]
+          Address=158.38.57.118/24
+          Gateway=158.38.57.1
+          DNS=158.38.50.10
+          DNS=158.38.49.10
 
-      [Network]
-      Address=158.38.57.118/24
-      Gateway=158.38.57.1
-      DNS=158.38.50.10
-      DNS=158.38.49.10
+    - path       : /etc/systemd/network/private.network
+      permissions: 0644
+      owner      : root
+      content    : |
+          [Match]
+          MACAddress=00:50:56:bb:76:3a
+          [Network]
+          Address=10.0.0.101/24
 
-  - path: /etc/systemd/network/private.network
-    permissions: 0644
-    owner: root
-    content: |
-      [Match]
-      MACAddress=00:50:56:bb:76:3a
+    - path       : /etc/coreos_metadata
+      permissions: 0644
+      content    : |
+          PUBLIC_IPV4=158.38.57.118
+          PRIVATE_IPV4=10.0.0.101
+          SHARED_DATA=/mnt/shared
 
-      [Network]
-      Address=10.0.0.101/24
+    - path       : /etc/gainmaster_metadata
+      permissions: 0644
+      content    : |
+          GAINMASTER_DOMAIN=hesjevik.im
+          GAINMASTER_SKYDNS_DOMAIN_PATH=im/hesjevik
 
-  - path: /etc/metadata
-    permissions: 0644
-    content: |
-      PUBLIC_IPV4=158.38.57.118
-      PRIVATE_IPV4=10.0.0.101
-      SHARED_DATA=/mnt/shared
-
-  - path: /etc/conf.d/nfs
-    permissions: '0644'
-    content: |
-      OPTS_RPC_MOUNTD=""
+    - path       : /etc/conf.d/nfs
+      permissions: '0644'
+      content    : |
+          OPTS_RPC_MOUNTD=""

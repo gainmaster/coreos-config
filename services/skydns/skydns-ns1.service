@@ -7,6 +7,9 @@ After=etcd.service
 Requires=docker.service
 After=docker.service
 
+Requires=skydns-ns1-registrator.service
+After=skydns-ns1-registrator.service
+
 [Service]
 TimeoutStartSec=0
 KillMode=none
@@ -18,13 +21,13 @@ ExecStartPre=-/usr/bin/docker kill skydns-ns1
 ExecStartPre=-/usr/bin/docker rm skydns-ns1
 ExecStartPre=/usr/bin/docker pull skynetservices/skydns
 
-ExecStartPre=/usr/bin/etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/dns/ns '{"host":"${PUBLIC_IPV4}"}'
-
 ExecStart=/usr/bin/docker run --rm --name skydns-ns1 \
     -e "ETCD_MACHINES=http://${PRIVATE_IPV4}:4001" \
     -e "SKYDNS_ADDR=0.0.0.0:53" \
     -e "SKYDNS_DOMAIN=${GAINMASTER_DOMAIN}" \
     -e "SKYDNS_NAMESERVERS=" \
+    -e SERVICE_NAME=skydns \
+    -e SERVICE_ID=ns1 \
     -p 53:53/udp \
     -p 53:53/tcp \
     --dns=127.0.0.1 \

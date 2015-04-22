@@ -17,7 +17,7 @@ ExecStartPre=/usr/bin/docker pull gliderlabs/registrator
 ExecStart=/usr/bin/docker run --rm --name registrator \
     -v /var/run/docker.sock:/tmp/docker.sock \
     -h %H \
-    gliderlabs/registrator etcd://${PRIVATE_IPV4}:4001/registrator -resync 5
+    gliderlabs/registrator etcd://${PRIVATE_IPV4}:4001/registrator -resync 5 -ttl 30 -ttl-refresh 20
 
 ExecStop=/usr/bin/docker stop registrator
 

@@ -30,10 +30,10 @@ coreos:
         - name    : docker.socket
           command : start
           drop-ins: 
-          - name: 30-ListenStream.conf
-            content: |
-            [Socket]
-            ListenStream=10.0.0.102:2375
+            - name: 30-ListenStream.conf
+              content: |
+                  [Socket]
+                  ListenStream=10.0.0.102:2375
 
         - name   : mnt-shared.mount
           command: start

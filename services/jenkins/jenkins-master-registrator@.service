@@ -8,25 +8,42 @@ BindsTo=jenkins-master@%i.service
 After=jenkins-master@%i.service
 
 [Service]
-EnvironmentFile=/etc/metadata
-EnvironmentFile=/tmp/jenkins_master_env
-RemainAfterExit=yes
+EnvironmentFile=/etc/coreos_metadata
+EnvironmentFile=/etc/gainmaster_metadata
 
 # Start
-ExecStart=/usr/bin/etcdctl set /vulcand/backends/jenkins/servers/jenkins-%i '{"URL": "${JENKINS_ADDRESS}"}'
-
-ExecStartPost=/usr/bin/etcdctl set /vulcand/backends/jenkins/backend '{"Type": "http"}'
-ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/jenkins/frontend '{"Type": "http", "BackendId": "jenkins", "Route": "Host(`jenkins.hesjevik.im`)"}'
+ExecStart=/usr/bin/bash -c "\
+    until (/usr/bin/etcdctl get /registrator/jenkins-master/%i); do \
+        sleep 10; \
+    done; \
+    SERVICE_ADDRESS=http://$(/usr/bin/etcdctl get /registrator/jenkins-master/%i); \ 
+    while true; do \
+        curl -f ${SERVICE_ADDRESS}; \
+        if [ $? -eq 0 ]; then \
+            etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/ci/node '{\"host\": \"http.service.${GAINMASTER_DOMAIN}\"}'; --ttl 30 \
+            etcdctl set /vulcand/frontends/jenkins-master/frontend '{\"Type\": \"http\", \"BackendId\": \"jenkins-master\", \"Route\": \"Host(`ci.${GAINMASTER_DOMAIN}`)\"}' --ttl 30; \
+            etcdctl set /vulcand/backends/jenkins-master/backend '{\"Type\": \"http\"}' --ttl 30; \
+            etcdctl set /vulcand/backends/jenkins-master/servers/%i '{\"URL\": \"${SERVICE_ADDRESS}\"}' --ttl 30; \
+        else \
+            etcdctl rm /vulcand/backends/jenkins-master/servers/%i \
+        fi; \
+        sleep 20; \
+    done"
 
 # Stop
-ExecStop=/bin/etcdctl rm /vulcand/backends/jenkins/servers/jenkins-%i
+ExecStop=/bin/etcdctl rm /vulcand/backends/jenkins-master/servers/%i
 
-ExecStopPost=/usr/bin/bash -c '\
-  JENKINS_STATUS=$(curl -f -s -I jenkins.hesjevik.im | grep HTTP/1.1); \
-  if [ -z "$JENKINS_STATUS" ]; then \
-      /usr/bin/etcdctl rm /vulcand/backends/jenkins --recursive; \
-      /usr/bin/etcdctl rm /vulcand/frontends/jenkins --recursive; \
-  fi'
+ExecStopPost=/usr/bin/bash -c "\
+    sleep 10; \
+    SERVICE_INSTANCES=$(etcdctl ls /registrator/jenkins-master | wc -l); \
+    if [ $SERVICE_INSTANCES -eq 0 ]; then \
+        etcdctl rm /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/ci --recursive; \
+        etcdctl rm /vulcand/backends/jenkins-master --recursive; \
+        etcdctl rm /vulcand/frontends/jenkins-master --recursive; \
+        etcdctl rm /registrator/jenkins-master --recursive; \
+    fi"
 
 [X-Fleet]
 MachineOf=jenkins-master@%i.service
+
+

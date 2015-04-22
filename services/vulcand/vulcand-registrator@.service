@@ -1,0 +1,25 @@
+[Unit]
+Description=Register Vulcand HTTP service instance %i in system
+
+Requires=etcd.service
+After=etcd.service
+
+BindsTo=vulcand@%i.service
+After=vulcand@%i.service
+
+[Service]
+EnvironmentFile=/etc/coreos_metadata
+EnvironmentFile=/etc/gainmaster_metadata
+
+ExecStart=/usr/bin/bash -c "\
+    while true; do \
+        etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/service/http/vulcand-%i '{\"host\": \"${PUBLIC_IPV4}\"}' --ttl 30; \
+        sleep 20; \
+    done"
+
+ExecStop=/usr/bin/bash -c "\
+    etcdctl rm /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/service/http/vulcand-%i"; \
+    etcdctl rm /registrator/vulcand/%i"
+
+[X-Fleet]
+MachineOf=vulcand@%i.service

@@ -10,16 +10,16 @@ After=docker.service
 [Service]
 EnvironmentFile=/etc/coreos_metadata
 
-ExecStartPre=-/usr/bin/docker kill registrator
-ExecStartPre=-/usr/bin/docker rm registrator
+ExecStartPre=-/usr/bin/docker kill docker-etcd-registrator
+ExecStartPre=-/usr/bin/docker rm docker-etcd-registrator
 ExecStartPre=/usr/bin/docker pull gliderlabs/registrator
 
-ExecStart=/usr/bin/docker run --rm --name registrator \
+ExecStart=/usr/bin/docker run --rm --name docker-etcd-registrator \
     -v /var/run/docker.sock:/tmp/docker.sock \
     -h %H \
     gliderlabs/registrator etcd://${PRIVATE_IPV4}:4001/registrator -resync 5
 
-ExecStop=/usr/bin/docker stop registrator
+ExecStop=/usr/bin/docker stop docker-etcd-registrator
 
 [X-Fleet]
 Global=true

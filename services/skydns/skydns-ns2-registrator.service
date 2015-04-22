@@ -10,9 +10,13 @@ EnvironmentFile=/etc/gainmaster_metadata
 
 ExecStart=/usr/bin/bash -c "\
     while true; do \
-        etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/dns/ns2 '{\"host\": \"${PUBLIC_IPV4}\"}'; \
+        etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/dns/ns2 '{\"host\": \"${PUBLIC_IPV4}\"}' --ttl 30; \
         sleep 20; \
     done"
+
+ExecStop=/usr/bin/bash -c "\
+    etcdctl rm /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/dns/ns2; \
+    etcdctl rm /registrator/skydns/ns2"
 
 [X-Fleet]
 MachineMetadata=name=coreos2

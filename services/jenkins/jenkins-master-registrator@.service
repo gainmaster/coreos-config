@@ -30,7 +30,7 @@ ExecStart=/usr/bin/bash -c "\
 
 ExecStop=/usr/bin/bash -c "\
     etcdctl rm /vulcand/backends/jenkins-master/servers/%i; \
-    sleep 3; \
+    sleep 10; \
     SERVICE_INSTANCES=$(etcdctl ls /registrator/jenkins-master | wc -l); \
     if [ $SERVICE_INSTANCES -eq 0 ]; then \
         etcdctl rm /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/ci --recursive; \

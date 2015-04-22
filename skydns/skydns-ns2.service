@@ -18,7 +18,7 @@ ExecStartPre=-/usr/bin/docker kill skydns-ns2
 ExecStartPre=-/usr/bin/docker rm skydns-ns2
 ExecStartPre=/usr/bin/docker pull skynetservices/skydns
 
-ExecStartPre=/usr/bin/etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/dns/ns '{"host":"${PUBLIC_IPV4}"}'
+ExecStartPre=/usr/bin/etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/dns/ns2 '{"host":"${PUBLIC_IPV4}"}'
 
 ExecStart=/usr/bin/docker run --rm --name skydns-ns2 \
     -e "ETCD_MACHINES=http://${PRIVATE_IPV4}:4001" \

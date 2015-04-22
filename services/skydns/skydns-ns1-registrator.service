@@ -14,9 +14,7 @@ ExecStart=/usr/bin/bash -c "\
         sleep 20; \
     done"
 
-ExecStop=/usr/bin/bash -c "\
-    etcdctl rm /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/dns/ns; \
-    etcdctl rm /registrator/skydns/ns1"
+ExecStop=/usr/bin/etcdctl rm /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/dns/ns
 
 [X-Fleet]
 MachineMetadata=name=coreos1

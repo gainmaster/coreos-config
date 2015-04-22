@@ -17,9 +17,7 @@ ExecStart=/usr/bin/bash -c "\
         sleep 20; \
     done"
 
-ExecStop=/usr/bin/bash -c "\
-    etcdctl rm /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/service/http/vulcand-%i"; \
-    etcdctl rm /registrator/vulcand/%i"
+ExecStop=/usr/bin/etcdctl rm /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/service/http/vulcand-%i"
 
 [X-Fleet]
 MachineOf=vulcand@%i.service

@@ -8,6 +8,11 @@ Requires=docker.service
 After=docker.service
 
 [Service]
+TimeoutStartSec=10m
+KillMode=none
+Restart=always
+RestartSec=10s
+
 EnvironmentFile=/etc/coreos_metadata
 
 ExecStartPre=-/usr/bin/docker kill docker-etcd-registrator

@@ -14,7 +14,7 @@ EnvironmentFile=/etc/gainmaster_metadata
 # Start
 ExecStart=/usr/bin/bash -c "\
     until (/usr/bin/etcdctl get /registrator/jenkins-master/%i); do \
-        sleep 10; \
+        sleep 3; \
     done; \
     SERVICE_ADDRESS=http://$(/usr/bin/etcdctl get /registrator/jenkins-master/%i); \ 
     while true; do \

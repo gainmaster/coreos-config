@@ -11,8 +11,10 @@ Requires=skydns-ns1-registrator.service
 After=skydns-ns1-registrator.service
 
 [Service]
-TimeoutStartSec=0
+TimeoutStartSec=10m
 KillMode=none
+Restart=always
+RestartSec=10s
 
 EnvironmentFile=/etc/coreos_metadata
 EnvironmentFile=/etc/gainmaster_metadata

@@ -16,7 +16,6 @@ ExecStart=/usr/bin/bash -c "\
         sleep 3; \
     done; \
     while true; do \
-        echo 1337; \
         curl -f http://$(etcdctl get /registrator/jenkins-master/%i); \
         if [ $? -ne 7 ]; then \
             etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/ci/node '{\"host\": \"http.service.${GAINMASTER_DOMAIN}\"}' --ttl 30; \
@@ -31,7 +30,7 @@ ExecStart=/usr/bin/bash -c "\
 
 ExecStop=/usr/bin/bash -c "\
     etcdctl rm /vulcand/backends/jenkins-master/servers/%i; \
-    sleep 10; \
+    sleep 20; \
     if [ $(etcdctl ls /registrator/jenkins-master | wc -l) -eq 0 ]; then \
         etcdctl rm /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/ci --recursive; \
         etcdctl rm /vulcand/backends/jenkins-master --recursive; \

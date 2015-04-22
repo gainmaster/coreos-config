@@ -1,0 +1,18 @@
+[Unit]
+Description=Registers CoreOS node in SkyDNS
+
+Requires=etcd.service
+After=etcd.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+
+EnvironmentFile=/etc/coreos_metadata
+EnvironmentFile=/etc/gainmaster_metadata
+
+ExecStart=/usr/bin/etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/node/%H '{"host":"${PUBLIC_IPV4}"}'
+ExecStop=/usr/bin/etcdctl rm /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/node/%H
+
+[X-Fleet]
+Global=true

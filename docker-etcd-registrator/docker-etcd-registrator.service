@@ -1,5 +1,5 @@
 [Unit]
-Description=Registrator service
+Description=Registers Docker port and ip addresses in etcd
 
 Requires=etcd.service
 After=etcd.service
@@ -8,16 +8,16 @@ Requires=docker.service
 After=docker.service
 
 [Service]
-EnvironmentFile=/etc/metadata
+EnvironmentFile=/etc/coreos_metadata
 
 ExecStartPre=-/usr/bin/docker kill registrator
 ExecStartPre=-/usr/bin/docker rm registrator
 ExecStartPre=/usr/bin/docker pull gliderlabs/registrator
 
 ExecStart=/usr/bin/docker run --rm --name registrator \
-  -v /var/run/docker.sock:/tmp/docker.sock \
-  -h %H \
-  gliderlabs/registrator etcd://${PRIVATE_IPV4}:4001/registrator -resync 5
+    -v /var/run/docker.sock:/tmp/docker.sock \
+    -h %H \
+    gliderlabs/registrator etcd://${PRIVATE_IPV4}:4001/registrator -resync 5
 
 ExecStop=/usr/bin/docker stop registrator
 

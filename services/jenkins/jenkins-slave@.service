@@ -16,7 +16,7 @@ EnvironmentFile=/etc/coreos_metadata
 
 ExecStartPre=-/usr/bin/docker kill jenkins-slave-%i
 ExecStartPre=-/usr/bin/docker rm jenkins-slave-%i
-ExecStartPre=/usr/bin/docker pull bachelorthesis/jenkins:slave
+ExecStartPre=/usr/bin/docker pull gainmaster/jenkins:slave
 
 ExecStart=/usr/bin/docker run --rm -i --privileged --name jenkins-slave-%i \
     -v ${SHARED_DATA}/jenkins/master/jobs/%i/workspace:/jenkins-workspace \

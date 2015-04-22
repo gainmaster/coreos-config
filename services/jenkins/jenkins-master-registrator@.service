@@ -16,14 +16,15 @@ ExecStart=/usr/bin/bash -c "\
         sleep 3; \
     done; \
     while true; do \
-        curl -f http://$(etcdctl get /registrator/jenkins-master/1); \
+        echo 1337; \
+        curl -f http://$(etcdctl get /registrator/jenkins-master/%i); \
         if [ $? -eq 0 ]; then \
-            etcdctl set /skydns/im/hesjevik/ci/node '{\"host\": \"http.service.${GAINMASTER_DOMAIN}\"}' --ttl 30; \
+            etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/ci/node '{\"host\": \"http.service.${GAINMASTER_DOMAIN}\"}' --ttl 30; \
             etcdctl set /vulcand/frontends/jenkins-master/frontend '{\"Type\": \"http\", \"BackendId\": \"jenkins-master\", \"Route\": \"Host(\`ci.${GAINMASTER_DOMAIN}\`)\"}' --ttl 30; \
             etcdctl set /vulcand/backends/jenkins-master/backend '{\"Type\": \"http\"}' --ttl 30; \
-            etcdctl set /vulcand/backends/jenkins-master/servers/1 '{\"URL\": \"http://$(etcdctl get /registrator/jenkins-master/1)\"}' --ttl 30; \
+            etcdctl set /vulcand/backends/jenkins-master/servers/%i '{\"URL\": \"http://$(etcdctl get /registrator/jenkins-master/%i)\"}' --ttl 30; \
         else \
-            etcdctl rm /vulcand/backends/jenkins-master/servers/1; \
+            etcdctl rm /vulcand/backends/jenkins-master/servers/%i; \
         fi; \
         sleep 20; \
     done"
@@ -31,8 +32,7 @@ ExecStart=/usr/bin/bash -c "\
 ExecStop=/usr/bin/bash -c "\
     etcdctl rm /vulcand/backends/jenkins-master/servers/%i; \
     sleep 10; \
-    SERVICE_INSTANCES=$(etcdctl ls /registrator/jenkins-master | wc -l); \
-    if [ $SERVICE_INSTANCES -eq 0 ]; then \
+    if [ $(etcdctl ls /registrator/jenkins-master | wc -l) -eq 0 ]; then \
         etcdctl rm /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/ci --recursive; \
         etcdctl rm /vulcand/backends/jenkins-master --recursive; \
         etcdctl rm /vulcand/frontends/jenkins-master --recursive; \
@@ -40,11 +40,3 @@ ExecStop=/usr/bin/bash -c "\
 
 [X-Fleet]
 MachineOf=jenkins-master@%i.service
-
-
-
-
-
-
-
-

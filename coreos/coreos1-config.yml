@@ -27,7 +27,6 @@ coreos:
           command: start
           enable : true
 
-        # This is needed for jenkins build
         - name    : docker.socket
           command : start
           drop-ins: 

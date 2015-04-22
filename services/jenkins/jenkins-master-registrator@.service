@@ -15,7 +15,7 @@ ExecStart=/usr/bin/bash -c "\
     until (etcdctl get /registrator/jenkins-master/%i); do \
         sleep 3; \
     done; \
-    SERVICE_ADDRESS=http://$(etcdctl get /registrator/jenkins-master/%i); \ 
+    SERVICE_ADDRESS=http://$(etcdctl get /registrator/jenkins-master/%i); \
     while true; do \
         curl -f ${SERVICE_ADDRESS}; \
         if [ $? -eq 0 ]; then \

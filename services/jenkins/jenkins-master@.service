@@ -1,14 +1,11 @@
 [Unit]
-Description=Jenkins CI master service id %i
+Description=Jenkins CI master service instance %i
 
 Requires=etcd.service
 After=etcd.service
 
 Requires=docker.service
 After=docker.service
-
-Requires=registrator.service
-After=registrator.service
 
 Requires=jenkins-master-registrator@%i.service
 Before=jenkins-master-registrator@%i.service
@@ -23,16 +20,18 @@ EnvironmentFile=/etc/coreos_metadata
 
 ExecStartPre=-/usr/bin/docker kill jenkins-master-%i
 ExecStartPre=-/usr/bin/docker rm jenkins-master-%i
-ExecStartPre=/usr/bin/docker pull bachelorthesis/jenkins
+ExecStartPre=/usr/bin/docker pull bachelorthesis/jenkins:master
 
 ExecStart=/usr/bin/docker run --rm --privileged --name jenkins-master-%i \
-  -v ${SHARED_DATA}/jenkins/master:/var/lib/jenkins \
-  -p ${PRIVATE_IPV4}::8080 \
-  -e SERVICE_NAME=jenkins-master \
-  -e SERVICE_ID=%i \
-  -e ETCDCTL_PEERS=http://${PRIVATE_IPV4}:4001 \
-  -e FLEETCTL_ENDPOINT=http://${PRIVATE_IPV4}:4001 \
-  gainmaster/jenkins
+    -v ${SHARED_DATA}/jenkins/master:/var/lib/jenkins \
+    -v /usr/bin/docker:/usr/bin/docker \
+    -v /usr/libexec/dockerinit:/usr/libexec/dockerinit \
+    -p ${PRIVATE_IPV4}::8080 \
+    -e SERVICE_NAME=jenkins-master \
+    -e SERVICE_ID=%i \
+    -e ETCDCTL_PEERS=http://${PRIVATE_IPV4}:4001 \
+    -e FLEETCTL_ENDPOINT=http://${PRIVATE_IPV4}:4001 \
+    gainmaster/jenkins:master
 
 ExecStop=/usr/bin/docker stop jenkins-master-%i
 

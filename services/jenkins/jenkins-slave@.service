@@ -1,5 +1,5 @@
 [Unit]
-Description=Jenkins CI master service id %i
+Description=Jenkins CI slave service instance %i
 
 Requires=etcd.service
 After=etcd.service
@@ -7,25 +7,27 @@ After=etcd.service
 Requires=docker.service
 After=docker.service
 
-Requires=registrator.service
-After=registrator.service
-
 [Service]
-TimeoutStartSec=5m
-EnvironmentFile=/etc/metadata
+TimeoutStartSec=10m
+KillMode=none
+Restart=no
+
+EnvironmentFile=/etc/coreos_metadata
 
 ExecStartPre=-/usr/bin/docker kill jenkins-slave-%i
 ExecStartPre=-/usr/bin/docker rm jenkins-slave-%i
 ExecStartPre=/usr/bin/docker pull bachelorthesis/jenkins:slave
 
 ExecStart=/usr/bin/docker run --rm -i --privileged --name jenkins-slave-%i \
-  -v ${SHARED_DATA}/jenkins/master/jobs/%i/workspace:/opt/jenkins-workspace \
-  -e SERVICE_NAME=jenkins-slave \
-  -e SERVICE_ID=%i \
-  -e PORT=2375 \
-  -p ${PRIVATE_IPV4}::2375 \
-  -w="/opt/jenkins-workspace" \
-  bachelorthesis/jenkins:slave
+    -v ${SHARED_DATA}/jenkins/master/jobs/%i/workspace:/jenkins-workspace \
+    -v /usr/bin/docker:/usr/bin/docker \
+    -v /usr/libexec/dockerinit:/usr/libexec/dockerinit \
+    -e SERVICE_NAME=jenkins-slave \
+    -e SERVICE_ID=%i \
+    -e PORT=2375 \
+    -p ${PRIVATE_IPV4}::2375 \
+    -w="/jenkins-workspace" \
+    bachelorthesis/jenkins:slave
 
 ExecStop=/usr/bin/docker stop jenkins-slave-%i
 

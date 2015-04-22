@@ -23,13 +23,13 @@ ExecStartPre=-/usr/bin/docker rm vulcand-%i
 ExecStartPre=/usr/bin/docker pull mailgun/vulcand:v0.8.0-beta.3
 
 ExecStart=/usr/bin/docker run --rm --name vulcand-%i \
-  -e SERVICE_NAME=vulcand \
-  -e SERVICE_ID=%i \
-  -p 80:80 \
-  mailgun/vulcand:v0.8.0-beta.3 \
-  /go/bin/vulcand \
-  -port=80 \
-  --etcd=http://${PRIVATE_IPV4}:4001
+    -e SERVICE_NAME=vulcand \
+    -e SERVICE_ID=%i \
+    -p 80:80 \
+    mailgun/vulcand:v0.8.0-beta.3 \
+    /go/bin/vulcand \
+    -port=80 \
+    --etcd=http://${PRIVATE_IPV4}:4001
 
 ExecStop=/usr/bin/docker stop vulcand-%i
 

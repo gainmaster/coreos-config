@@ -1,5 +1,5 @@
 [Unit]
-Description=Register Vulcand HTTP service instance %i in system
+Description=Register Vulcand HTTP service instance %i in SkyDNS
 
 Requires=etcd.service
 After=etcd.service

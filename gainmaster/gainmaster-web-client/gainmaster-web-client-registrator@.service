@@ -31,4 +31,4 @@ ExecStop=/usr/bin/bash -c "\
     rm /tmp/gainmaster_web_client_env_%i"
 
 [X-Fleet]
-MachineOf=jenkins-master@%i.service
+MachineOf=gainmaster-web-client@%i.service

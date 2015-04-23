@@ -26,6 +26,7 @@ ExecStartPre=/usr/bin/docker pull gainmaster/gainmaster-web-client
 ExecStart=/usr/bin/docker run --rm --name gainmaster-web-client-%i \
     -e SERVICE_NAME=gainmaster-web-client \
     -e SERVICE_ID=%i \
+    -p ::80 \
     gainmaster/gainmaster-web-client
 
 ExecStartPost=/usr/bin/bash -c '\

@@ -20,7 +20,7 @@ EnvironmentFile=/etc/coreos_metadata
 
 ExecStartPre=-/usr/bin/docker kill jenkins-master-%i
 ExecStartPre=-/usr/bin/docker rm jenkins-master-%i
-ExecStartPre=/usr/bin/docker pull bachelorthesis/jenkins:master
+ExecStartPre=/usr/bin/docker pull gainmaster/jenkins:master
 
 ExecStart=/usr/bin/docker run --rm --privileged --name jenkins-master-%i \
     -v ${SHARED_DATA}/jenkins/master:/var/lib/jenkins \

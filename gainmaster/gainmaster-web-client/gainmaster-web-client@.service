@@ -1,0 +1,40 @@
+[Unit]
+Description=Gainmaster Web Client instance %i
+
+Requires=etcd.service
+After=etcd.service
+
+Requires=docker.service
+After=docker.service
+
+## DIS
+Requires=gainmaster-web-client-registrator@%i.service
+Before=gainmaster-web-client-registrator@%i.service
+
+[Service]
+TimeoutStartSec=10m
+KillMode=none
+Restart=always
+RestartSec=10s
+
+EnvironmentFile=/etc/coreos_metadata
+
+ExecStartPre=-/usr/bin/docker kill gainmaster-web-client-%i
+ExecStartPre=-/usr/bin/docker rm gainmaster-web-client-%i
+ExecStartPre=/usr/bin/docker pull gainmaster/gainmaster-web-client
+
+ExecStart=/usr/bin/docker run --rm --name gainmaster-web-client-%i \
+    -e SERVICE_NAME=gainmaster-web-client \
+    -e SERVICE_ID=%i \
+    gainmaster/gainmaster-web-client
+
+ExecStartPost=/usr/bin/bash -c '\
+    until (etcdctl get /registrator/gainmaster-web-client/%i); do \
+        sleep 3; \
+    done; \
+    echo SERVICE_ADDRESS=http://$(etcdctl get /registrator/gainmaster-web-client/%i) > /tmp/gainmaster_web_client_env_%i'
+
+ExecStop=/usr/bin/docker stop gainmaster-web-client-%i
+
+[X-Fleet]
+Conflicts=gainmaster-web-client@*.service

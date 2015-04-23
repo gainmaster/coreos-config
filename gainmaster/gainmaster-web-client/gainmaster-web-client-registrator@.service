@@ -1,0 +1,34 @@
+[Unit]
+Description=Register Gainmaster Web Client service instance %i in SkyDNS and Vulcand
+
+Requires=etcd.service
+After=etcd.service
+
+BindsTo=gainmaster-web-client@%i.service
+After=gainmaster-web-client@%i.service
+
+[Service]
+EnvironmentFile=/etc/coreos_metadata
+EnvironmentFile=/etc/gainmaster_metadata
+EnvironmentFile=/tmp/gainmaster_web_client_env_%i
+
+ExecStart=/usr/bin/bash -c "\
+    while true; do \
+        curl -f ${SERVICE_ADDRESS}; \
+        if [ $? -ne 7 ]; then \
+            etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/www/%i '{\"host\": \"http.service.${GAINMASTER_DOMAIN}\"}' --ttl 30; \
+            etcdctl set /vulcand/frontends/gainmaster-web-client/frontend '{\"Type\": \"http\", \"BackendId\": \"gainmaster-web-client\", \"Route\": \"Host(`www.${GAINMASTER_DOMAIN}`)\"}' --ttl 30; \
+            etcdctl set /vulcand/backends/gainmaster-web-client/backend '{\"Type\": \"http\"}' --ttl 30; \
+            etcdctl set /vulcand/backends/gainmaster-web-client/servers/%i '{\"URL\": \"${SERVICE_ADDRESS}\"}' --ttl 30; \
+        else \
+            etcdctl rm /vulcand/backends/gainmaster-web-client/servers/%i; \
+        fi; \
+        sleep 20; \
+    done"
+
+ExecStop=/usr/bin/bash -c "\
+    etcdctl rm /vulcand/backends/gainmaster-web-client/servers/%i; \
+    rm /tmp/gainmaster_web_client_env_%i"
+
+[X-Fleet]
+MachineOf=jenkins-master@%i.service

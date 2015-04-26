@@ -10,7 +10,7 @@ EnvironmentFile=/etc/gainmaster_metadata
 
 ExecStart=/usr/bin/bash -c "\
     while true; do \
-        etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/dns/ns2 '{\"host\": \"${PUBLIC_IPV4}\"}' --ttl 30; \
+        etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/dns/ns2 '{\"host\": \"${PUBLIC_IPV4}\", \"ttl\": 30}' --ttl 30; \
         sleep 20; \
     done"
 

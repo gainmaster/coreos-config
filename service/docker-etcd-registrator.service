@@ -19,9 +19,10 @@ ExecStartPre=-/usr/bin/docker kill docker-etcd-registrator
 ExecStartPre=-/usr/bin/docker rm docker-etcd-registrator
 ExecStartPre=/usr/bin/docker pull gliderlabs/registrator
 
-ExecStart=/usr/bin/docker run --rm --name docker-etcd-registrator \
-    -v /var/run/docker.sock:/tmp/docker.sock \
-    -h %H \
+ExecStart=/usr/bin/docker run --rm \
+    --name docker-etcd-registrator \
+    --volume /var/run/docker.sock:/tmp/docker.sock \
+    --hostname %H \
     gliderlabs/registrator etcd://${PRIVATE_IPV4}:4001/registrator -resync 5
 
 ExecStop=/usr/bin/docker stop docker-etcd-registrator

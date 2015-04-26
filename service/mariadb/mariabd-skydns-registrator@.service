@@ -1,0 +1,23 @@
+[Unit]
+Description=Register MariaDB service instance %i to SkyDNS
+
+Requires=etcd.service
+After=etcd.service
+
+BindsTo=mariadb@%i.service
+After=mariadb@%i.service
+
+[Service]
+EnvironmentFile=/etc/coreos_metadata
+EnvironmentFile=/etc/gainmaster_metadata
+
+ExecStart=/usr/bin/bash -c "\
+    while true; do \
+        etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/service/mysql/mariadb-%i '{\"host\": \"${PUBLIC_IPV4}\", \"port\": 3306, \"ttl\": 30 }' --ttl 30; \
+        sleep 20; \
+    done"
+
+ExecStop=/usr/bin/etcdctl rm /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/service/mysql/mariadb-%i
+
+[X-Fleet]
+MachineOf=mariadb@%i.service

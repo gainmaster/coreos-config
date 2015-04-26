@@ -1,5 +1,5 @@
 [Unit]
-Description=Vulcand HTTP service instance %i 
+Description=Vulcand HTTP service instance %i
 
 Requires=etcd.service
 After=etcd.service
@@ -22,14 +22,13 @@ ExecStartPre=-/usr/bin/docker kill vulcand-%i
 ExecStartPre=-/usr/bin/docker rm vulcand-%i
 ExecStartPre=/usr/bin/docker pull mailgun/vulcand:v0.8.0-beta.3
 
-ExecStart=/usr/bin/docker run --rm --name vulcand-%i \
-    -e SERVICE_NAME=vulcand \
-    -e SERVICE_ID=%i \
-    -p 80:80 \
+ExecStart=/usr/bin/docker run --rm \
+    --name vulcand-%i \
+    --env SERVICE_NAME=vulcand \
+    --env SERVICE_ID=%i \
+    --publish 80:80 \
     mailgun/vulcand:v0.8.0-beta.3 \
-    /go/bin/vulcand \
-    -port=80 \
-    --etcd=http://${PRIVATE_IPV4}:4001
+        /go/bin/vulcand -port=80 --etcd=http://${PRIVATE_IPV4}:4001
 
 ExecStop=/usr/bin/docker stop vulcand-%i
 

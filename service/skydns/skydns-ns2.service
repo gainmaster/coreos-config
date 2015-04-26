@@ -23,15 +23,16 @@ ExecStartPre=-/usr/bin/docker kill skydns-ns2
 ExecStartPre=-/usr/bin/docker rm skydns-ns2
 ExecStartPre=/usr/bin/docker pull skynetservices/skydns
 
-ExecStart=/usr/bin/docker run --rm --name skydns-ns2 \
-    -e "ETCD_MACHINES=http://${PRIVATE_IPV4}:4001" \
-    -e "SKYDNS_ADDR=0.0.0.0:53" \
-    -e "SKYDNS_DOMAIN=${GAINMASTER_DOMAIN}" \
-    -e "SKYDNS_NAMESERVERS=" \
-    -e SERVICE_NAME=skydns \
-    -e SERVICE_ID=ns2 \
-    -p 53:53/udp \
-    -p 53:53/tcp \
+ExecStart=/usr/bin/docker run --rm \
+    --name skydns-ns2 \
+    --env ETCD_MACHINES=http://${PRIVATE_IPV4}:4001 \
+    --env SKYDNS_ADDR=0.0.0.0:53 \
+    --env SKYDNS_DOMAIN=${GAINMASTER_DOMAIN} \
+    --env SKYDNS_NAMESERVERS= \
+    --env SERVICE_NAME=skydns \
+    --env SERVICE_ID=ns2 \
+    --publish 53:53/udp \
+    --publish 53:53/tcp \
     --dns=127.0.0.1 \
     skynetservices/skydns
 

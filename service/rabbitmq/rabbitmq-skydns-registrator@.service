@@ -1,0 +1,23 @@
+[Unit]
+Description=Register RabbitMQ service instance %i to SkyDNS
+
+Requires=etcd.service
+After=etcd.service
+
+BindsTo=rabbitmq@%i.service
+After=rabbitmq@%i.service
+
+[Service]
+EnvironmentFile=/etc/coreos_metadata
+EnvironmentFile=/etc/gainmaster_metadata
+
+ExecStart=/usr/bin/bash -c "\
+    while true; do \
+        etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/amqp/rabbitmq-%i '{\"host\": \"${PUBLIC_IPV4}\", \"port\": 5672, \"ttl\": 30 }' --ttl 30; \
+        sleep 20; \
+    done"
+
+ExecStop=/usr/bin/etcdctl rm /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/amqp/rabbitmq-%i
+
+[X-Fleet]
+MachineOf=rabbitmq@%i.service

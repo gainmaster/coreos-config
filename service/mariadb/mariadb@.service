@@ -1,0 +1,33 @@
+[Unit]
+Description=MariaDB service instance %i
+
+Requires=etcd.service
+After=etcd.service
+
+Requires=docker.service
+After=docker.service
+
+[Service]
+TimeoutStartSec=10m
+KillMode=none
+Restart=always
+RestartSec=10s
+
+EnvironmentFile=/etc/coreos_metadata
+
+ExecStartPre=-/usr/bin/docker kill mariadb-%i
+ExecStartPre=-/usr/bin/docker rm mariadb-%i
+ExecStartPre=/usr/bin/docker pull bachelorthesis/mariadb
+
+ExecStart=/usr/bin/docker run --rm \
+    --name mariadb-%i \
+    --volume /data/mysql:/var/lib/mysql \
+    --env SERVICE_NAME=mariadb \
+    --env SERVICE_ID=%i \
+    --publish 3306:3306 \
+    bachelorthesis/mariadb
+
+ExecStop=/usr/bin/docker stop mariadb-%i
+
+[X-Fleet]
+Conflicts=mariadb@*.service

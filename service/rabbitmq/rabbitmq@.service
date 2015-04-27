@@ -17,7 +17,7 @@ EnvironmentFile=/etc/coreos_metadata
 
 ExecStartPre=-/usr/bin/docker kill rabbitmq-%i
 ExecStartPre=-/usr/bin/docker rm rabbitmq-%i
-ExecStartPre=/usr/bin/docker pull bachelorthesis/rabbitmq
+ExecStartPre=/usr/bin/docker pull gainmaster/rabbitmq
 
 #TODO: Load username and password from etcd
 #TODO: Load cookie from etcd
@@ -27,7 +27,7 @@ ExecStart=/usr/bin/docker run --rm \
     --env SERVICE_ID=%i \
     --publish 5672:5672 \
     --publish 15672:15672 \
-    bachelorthesis/rabbitmq
+    gainmaster/rabbitmq
 
 ExecStop=/usr/bin/docker stop rabbitmq
 

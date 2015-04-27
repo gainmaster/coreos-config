@@ -15,7 +15,7 @@ EnvironmentFile=/etc/gainmaster_metadata
 ExecStart=/usr/bin/bash -c "\
     while true; do \
         etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/amqp/rabbitmq-%i '{\"host\": \"${PUBLIC_IPV4}\", \"port\": 5672, \"ttl\": 30 }' --ttl 30; \
-        etcdctl set /registrator/rabbitmq/%i ${PRIVATE_IPV4}
+        etcdctl set /registrator/rabbitmq/%i ${PRIVATE_IPV4}; \
         sleep 20; \
     done"
 

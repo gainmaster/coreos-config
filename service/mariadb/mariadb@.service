@@ -14,18 +14,20 @@ Restart=always
 RestartSec=10s
 
 EnvironmentFile=/etc/coreos_metadata
+EnvironmentFile=/etc/gainmaster_metadata
 
 ExecStartPre=-/usr/bin/docker kill mariadb-%i
 ExecStartPre=-/usr/bin/docker rm mariadb-%i
-ExecStartPre=/usr/bin/docker pull bachelorthesis/mariadb
+ExecStartPre=/usr/bin/docker pull bachelorthesis/mariadb:mariadb-galera
 
 ExecStart=/usr/bin/docker run --rm \
     --name mariadb-%i \
     --volume /data/mysql:/var/lib/mysql \
     --env SERVICE_NAME=mariadb \
     --env SERVICE_ID=%i \
+    --env CLUSTER_DOMAIN_NAME=mysql.${GAINMASTER_DOMAIN}
     --publish 3306:3306 \
-    bachelorthesis/mariadb
+    bachelorthesis/mariadb:mariadb-galera
 
 ExecStop=/usr/bin/docker stop mariadb-%i
 

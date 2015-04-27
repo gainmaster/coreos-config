@@ -30,8 +30,17 @@ ExecStart=/usr/bin/docker run --rm \
     --publish 4369:4369 \
     --publish 5672:5672 \
     --publish 15672:15672 \
+		--publish 25672:25672 \
     --publish 35197:35197 \
     gainmaster/rabbitmq
+
+ExecStartPost=/usr/bin/bash -c "\
+			RABBITMQ_MASTER_ADDRESS=$(etcdctl get /registrator/rabbitmq/1); \
+			if [ ! -z "$RABBITMQ_MASTER_ADDRESS" ]; then \
+				docker exec rabbitmq-%i rabbitmqctl stop_app; \
+				docker exec rabbitmq-%i rabbitmqctl join_cluster rabbit@$RABBITMQ_MASTER_ADDRESS; \
+				docker exec rabbitmq-%i rabbitmqctl start_app; \
+			"
 
 ExecStop=/usr/bin/docker stop rabbitmq-%i
 

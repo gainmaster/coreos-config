@@ -7,6 +7,9 @@ After=etcd.service
 Requires=docker.service
 After=docker.service
 
+Requires=mariadb-skydn-registrator@%i.service
+Before=mariadb-skydns-registrator@%i.service
+
 [Service]
 TimeoutStartSec=10m
 KillMode=none
@@ -25,7 +28,7 @@ ExecStart=/usr/bin/docker run --rm \
     --volume /data/mysql:/var/lib/mysql \
     --env SERVICE_NAME=mariadb \
     --env SERVICE_ID=%i \
-    --env CLUSTER_DOMAIN_NAME=mysql.${GAINMASTER_DOMAIN} \
+    --env CLUSTER_DOMAIN_NAME=mysql.service.${GAINMASTER_DOMAIN} \
     --publish 3306:3306 \
     gainmaster/mariadb:mariadb-galera
 

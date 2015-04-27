@@ -25,11 +25,13 @@ ExecStart=/usr/bin/docker run --rm \
     --name rabbitmq-%i \
     --env SERVICE_NAME=rabbitmq \
     --env SERVICE_ID=%i \
+    --publish 4369:4369 \
     --publish 5672:5672 \
     --publish 15672:15672 \
+    --publish 35197:35197 \
     gainmaster/rabbitmq
 
-ExecStop=/usr/bin/docker stop rabbitmq
+ExecStop=/usr/bin/docker stop rabbitmq-%i
 
 [X-Fleet]
 Conflicts=rabbitmq@*.service

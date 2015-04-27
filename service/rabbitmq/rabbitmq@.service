@@ -22,7 +22,8 @@ ExecStartPre=/usr/bin/docker pull gainmaster/rabbitmq
 #TODO: Load username and password from etcd
 #TODO: Load cookie from etcd
 ExecStart=/usr/bin/docker run --rm \
- 	-e RABBITMQ_USE_LONGNAME=true \
+	  -e HOSTNAME=${PRIVATE_IPV4} \
+ 	  -e RABBITMQ_USE_LONGNAME=true \
     --name rabbitmq-%i \
     --env SERVICE_NAME=rabbitmq \
     --env SERVICE_ID=%i \

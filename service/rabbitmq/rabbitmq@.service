@@ -41,8 +41,8 @@ ExecStartPost=/usr/bin/bash -c "\
 				docker exec rabbitmq-%i rabbitmqctl stop_app; \
 				docker exec rabbitmq-%i rabbitmqctl join_cluster $RABBITMQ_MASTER_ADDRESS; \
 				docker exec rabbitmq-%i rabbitmqctl start_app; \
-			else
-			  etcdctl set /rabbitmq/master rabbit@$RABBITMQ_MASTER_ADDRESS;
+			else	\
+			  etcdctl set /rabbitmq/master rabbit@$RABBITMQ_MASTER_ADDRESS;	\
 		  fi"
 
 ExecStop=/usr/bin/docker stop rabbitmq-%i

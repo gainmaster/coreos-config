@@ -14,7 +14,6 @@ Restart=always
 RestartSec=10s
 
 EnvironmentFile=/etc/coreos_metadata
-EnvironmentFile=/tmp/rabbitmq_env
 
 ExecStartPre=-/usr/bin/docker kill rabbitmq-%i
 ExecStartPre=-/usr/bin/docker rm rabbitmq-%i

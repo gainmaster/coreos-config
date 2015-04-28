@@ -31,6 +31,9 @@ ExecStart=/usr/bin/docker run --rm \
     --env MYSQL_CLUSTER_DOMAIN_NAME=mysql.service.${GAINMASTER_DOMAIN} \
     --env MYSQL_NODE_ADDRESS=${PUBLIC_IPV4} \
     --publish 3306:3306 \
+    --publish 4567:4567 \
+    --publish 4568:4568 \
+    --publish 4444:4444 \
     gainmaster/mariadb:mariadb-galera
 
 ExecStop=/usr/bin/docker stop mariadb-%i

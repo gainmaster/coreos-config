@@ -22,10 +22,12 @@ ExecStartPre=/usr/bin/docker pull gainmaster/rabbitmq
 
 #TODO: Load username and password from etcd
 #TODO: Load cookie from etcd
-ExecStart=/usr/bin/docker run --rm \
+ExecStart=/usr/bin/bash -c '\
+		RABBITMQ_MASTER_NODE=$(etcdctl get /registrator/rabbitmq/1); \
+		/usr/bin/docker run --rm \
 	  -e HOSTNAME=${PRIVATE_IPV4} \
  	  -e RABBITMQ_USE_LONGNAME=true \
-		-e CLUSTER_WITH=${RABBITMQ_MASTER_NODE} \
+		-e CLUSTER_WITH=$RABBITMQ_MASTER_NODE \
     --name rabbitmq-%i \
     --env SERVICE_NAME=rabbitmq \
     --env SERVICE_ID=%i \
@@ -34,15 +36,7 @@ ExecStart=/usr/bin/docker run --rm \
     --publish 15672:15672 \
 		--publish 25672:25672 \
     --publish 35197:35197 \
-    gainmaster/rabbitmq
-
-ExecStartPost=/usr/bin/bash -c '\
-  if [ -z "$RABBITMQ_MASTER_NODE"]; then \
-	  until (etcdctl get /registrator/rabbitmq/%i); do \
-	    sleep 3; \
-	  done; \
-  	echo RABBITMQ_MASTER_NODE=$(etcdctl get /registrator/rabbitmq/%i) > /tmp/rabbitmq_env; \
-	fi'
+    gainmaster/rabbitmq'
 
 ExecStop=/usr/bin/docker stop rabbitmq-%i
 

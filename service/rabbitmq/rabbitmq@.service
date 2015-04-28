@@ -24,6 +24,7 @@ ExecStartPre=/usr/bin/docker pull gainmaster/rabbitmq
 ExecStart=/usr/bin/docker run --rm \
 	  -e HOSTNAME=${PRIVATE_IPV4} \
  	  -e RABBITMQ_USE_LONGNAME=true \
+		-e CLUSTER_WITH=$(etcdctl get /registrator/rabbitmq/1) \
     --name rabbitmq-%i \
     --env SERVICE_NAME=rabbitmq \
     --env SERVICE_ID=%i \
@@ -33,13 +34,6 @@ ExecStart=/usr/bin/docker run --rm \
 		--publish 25672:25672 \
     --publish 35197:35197 \
     gainmaster/rabbitmq
-
-#TODO: Find master address somewhere else
-ExecStartPost=/usr/bin/bash -c "\
-			RABBITMQ_MASTER_ADDRESS=$(etcdctl get /rabbitmq/master/); \
-			if [ ! -z "$RABBITMQ_MASTER_ADDRESS" ]; then \
-			  etcdctl set /rabbitmq/master rabbit@$RABBITMQ_MASTER_ADDRESS;	\
-		  fi;"
 
 ExecStop=/usr/bin/docker stop rabbitmq-%i
 

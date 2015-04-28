@@ -7,8 +7,8 @@ After=etcd.service
 Requires=docker.service
 After=docker.service
 
-Requires=vulcand-registrator@%i.service
-Before=vulcand-registrator@%i.service
+Requires=vulcand-skydns-registrator@%i.service
+Before=vulcand-skydns-registrator@%i.service
 
 [Service]
 TimeoutStartSec=10m

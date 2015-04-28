@@ -7,7 +7,7 @@ After=etcd.service
 Requires=docker.service
 After=docker.service
 
-Requires=mariadb-skydn-registrator@%i.service
+Requires=mariadb-skydns-registrator@%i.service
 Before=mariadb-skydns-registrator@%i.service
 
 [Service]

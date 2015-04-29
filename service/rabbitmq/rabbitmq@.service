@@ -24,9 +24,9 @@ ExecStartPre=/usr/bin/docker pull gainmaster/rabbitmq
 #TODO: Load cookie from etcd
 ExecStart=/usr/bin/docker run --rm \
 	--name rabbitmq-%i \
-    --env HOSTNAME=${PUBLIC_IPV4} \
+    --env HOSTNAME=rabbitmq-%i.amqp.service.${GAINMASTER_DOMAIN} \
 	--env RABBITMQ_USE_LONGNAME=true \
-	--env CLUSTER_WITH=rabbitmq.service.${GAINMASTER_DOMAIN} \
+	--env CLUSTER_WITH=rabbitmq-1.amqp.service.${GAINMASTER_DOMAIN} \
     --env SERVICE_NAME=rabbitmq \
     --env SERVICE_ID=%i \
     --publish 4369:4369 \

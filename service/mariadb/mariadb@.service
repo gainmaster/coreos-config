@@ -24,10 +24,10 @@ ExecStartPre=-/usr/bin/docker rm mariadb-%i
 ExecStartPre=/usr/bin/docker pull gainmaster/mariadb:mariadb-galera
 
 ExecStart=/usr/bin/bash -c '\
-    SERVICE_INSTANCES=$(etcdctl ls --recursive /skydns/im/hesjevik/service/amqp | wc -l); \
+    SERVICE_INSTANCES=$(etcdctl ls --recursive /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/service/mysql | wc -l); \
     if [ $SERVICE_INSTANCES -ne 0 ]; then \
-        MYSQL_NODE_ADDRESS=$(etcdctl get $(etcdctl ls /skydns/im/hesjevik/service/amqp | head -n 1) | cut -d":" -f2 | cut -d "," -f1 | cut -c3- | rev | cut -c3- | rev ); \
-    fi \
+        MYSQL_NODE_ADDRESS=$(etcdctl get $(etcdctl ls /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/service/mysql | head -n 1) | cut -d":" -f2 | cut -d "," -f1 | cut -c3- | rev | cut -c3- | rev ); \
+    fi; \
     docker run --rm \
         --name mariadb-%i \
         --volume /data/mysql:/var/lib/mysql \

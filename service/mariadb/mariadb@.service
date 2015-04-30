@@ -23,18 +23,23 @@ ExecStartPre=-/usr/bin/docker kill mariadb-%i
 ExecStartPre=-/usr/bin/docker rm mariadb-%i
 ExecStartPre=/usr/bin/docker pull gainmaster/mariadb:mariadb-galera
 
-ExecStart=/usr/bin/docker run --rm \
-    --name mariadb-%i \
-    --volume /data/mysql:/var/lib/mysql \
-    --env SERVICE_NAME=mariadb \
-    --env SERVICE_ID=%i \
-    --env MYSQL_CLUSTER_DOMAIN_NAME=mysql.service.${GAINMASTER_DOMAIN} \
-    --env MYSQL_NODE_ADDRESS=${PUBLIC_IPV4} \
-    --publish 3306:3306 \
-    --publish 4567:4567 \
-    --publish 4568:4568 \
-    --publish 4444:4444 \
-    gainmaster/mariadb:mariadb-galera
+ExecStart=/usr/bin/bash -c '\
+    SERVICE_INSTANCES=$(etcdctl ls --recursive /skydns/im/hesjevik/service/amqp | wc -l); \
+    if [ $SERVICE_INSTANCES -ne 0 ]; then \
+        MYSQL_NODE_ADDRESS=$(etcdctl get $(etcdctl ls /skydns/im/hesjevik/service/amqp | head -n 1) | cut -d":" -f2 | cut -d "," -f1 | cut -c3- | rev | cut -c3- | rev ); \
+    fi \
+    docker run --rm \
+        --name mariadb-%i \
+        --volume /data/mysql:/var/lib/mysql \
+        --env SERVICE_NAME=mariadb \
+        --env SERVICE_ID=%i \
+        --env MYSQL_CLUSTER_DOMAIN_NAME=${MYSQL_NODE_ADDRESS} \
+        --env MYSQL_NODE_ADDRESS=${PUBLIC_IPV4} \
+        --publish 3306:3306 \
+        --publish 4567:4567 \
+        --publish 4568:4568 \
+        --publish 4444:4444 \
+        gainmaster/mariadb:mariadb-galera'
 
 ExecStop=/usr/bin/docker stop mariadb-%i
 

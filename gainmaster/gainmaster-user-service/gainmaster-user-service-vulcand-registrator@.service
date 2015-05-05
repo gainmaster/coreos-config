@@ -16,7 +16,7 @@ RemainAfterExit=yes
 ExecStart=/usr/bin/bash -c "\
     etcdctl set /vulcand/backends/gainmaster-user-service/servers/%i '{\"URL\": \"${SERVICE_ADDRESS}\"}'; \
     etcdctl set /vulcand/backends/gainmaster-user-service/backend '{\"Type\": \"http\"}'; \
-    etcdctl set /vulcand/frontends/gainmaster-user-service/frontend '{\"Type\": \"http\", \"BackendId\": \"gainmaster-user-service\", \"Route\": \"Host(`api.${GAINMASTER_DOMAIN}`) && PathRegexp(`/users(.*)`)\"}';" \
+    etcdctl set /vulcand/frontends/gainmaster-user-service/frontend '{\"Type\": \"http\", \"BackendId\": \"gainmaster-user-service\", \"Route\": \"Host(`api.${GAINMASTER_DOMAIN}`) && PathRegexp(`/users(.*)`)\"}';"
 
 ExecStop=/bin/etcdctl rm /vulcand/backends/gainmaster-user-service/servers/%i
 

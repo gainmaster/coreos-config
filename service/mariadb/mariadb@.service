@@ -35,7 +35,7 @@ ExecStart=/usr/bin/bash -c "\
         --volume /data/mysql:/var/lib/mysql \
         --env SERVICE_NAME=mariadb \
         --env SERVICE_ID=%i \
-        --env MYSQL_CLUSTER_DOMAIN_NAME=${MYSQL_CLUSTER_DOMAIN} \
+        --env MYSQL_CLUSTER_DOMAIN_NAME=$MYSQL_CLUSTER_DOMAIN \
         --env MYSQL_NODE_ADDRESS=${PUBLIC_IPV4} \
         --publish 3306:3306 \
         --publish 4567:4567 \

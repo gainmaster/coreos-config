@@ -29,7 +29,7 @@ ExecStart=/usr/bin/docker run --name gainmaster-user-service \
   gainmaster/gainmaster-user-service
 
 ExecStartPost=/usr/bin/bash -c '\
-  until (etcdctl get /registrator/gainmaster-user-service/%i); do \
+  until $(etcdctl get /registrator/gainmaster-user-service/%i); do \
     sleep 3; \
   done; \
   echo SERVICE_ADDRESS=http://$(etcdctl get /registrator/gainmaster-user-service/%i) > /tmp/gainmaster_user_service_env'

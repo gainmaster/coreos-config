@@ -25,9 +25,11 @@ ExecStartPre=/usr/bin/docker pull gainmaster/mariadb:mariadb-galera
 
 ExecStart=/usr/bin/bash -c "\
     SERVICE_INSTANCES=$(etcdctl ls --recursive /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/service/mysql | wc -l); \
+    echo $SERVICE_INSTANCES; \
     if [ $SERVICE_INSTANCES -ne 0 ]; then \
-        MYSQL_CLUSTER_DOMAIN=mysql.service.${GAINMASTER_DOMAIN}.$(etcdctl ls /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/service/mysql | cut -d / -f7 | head -n 1); \
+        MYSQL_CLUSTER_DOMAIN=$(etcdctl ls /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/service/mysql | cut -d / -f7 | head -n 1).mysql.service.${GAINMASTER_DOMAIN}; \
     fi; \
+    echo $MYSQL_CLUSTER_DOMAIN; \
     docker run --rm \
         --name mariadb-%i \
         --volume /data/mysql:/var/lib/mysql \

@@ -15,12 +15,12 @@ TimeoutStartSec=0
 KillMode=none
 EnvironmentFile=/etc/coreos_metadata
 
-ExecStartPre=-/usr/bin/docker kill gainmaster-user-service
-ExecStartPre=-/usr/bin/docker rm gainmaster-user-service
+ExecStartPre=-/usr/bin/docker kill gainmaster-user-service-%i
+ExecStartPre=-/usr/bin/docker rm gainmaster-user-service-%i
 ExecStartPre=/usr/bin/docker pull gainmaster/gainmaster-user-service
 
 ExecStart=/usr/bin/docker run --name gainmaster-user-service \
-  --env SERVICE_NAME=gainmaster-user-service \
+  --env SERVICE_NAME=gainmaster-user-service-%i \
   --env SERVICE_ID=%i \
   --publish ${PRIVATE_IPV4}::8080 \
   gainmaster/gainmaster-user-service
@@ -29,9 +29,9 @@ ExecStartPost=/usr/bin/bash -c '\
   until (etcdctl get /registrator/gainmaster-user-service/%i); do \
     sleep 3; \
   done; \
-  echo SERVICE_ADDRESS=http://$(etcdctl get /registrator/gainmaster-user-service/%i) > /tmp/gainmaster_user_service_env'
+  echo SERVICE_ADDRESS=http://$(etcdctl get /registrator/gainmaster-user-service/%i) > /tmp/gainmaster_user_service_env_%i'
 
-ExecStop=/usr/bin/docker stop gainmaster-user-service
+ExecStop=/usr/bin/docker stop gainmaster-user-service-%i
 
 [X-Fleet]
 Conflicts=gainmaster-user-service@*.service

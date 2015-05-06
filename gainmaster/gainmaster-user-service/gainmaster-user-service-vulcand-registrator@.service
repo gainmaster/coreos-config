@@ -10,23 +10,27 @@ After=gainmaster-user-service@%i.service
 [Service]
 EnvironmentFile=/etc/coreos_metadata
 EnvironmentFile=/etc/gainmaster_metadata
-EnvironmentFile=/tmp/gainmaster_user_service_env
-RemainAfterExit=yes
+EnvironmentFile=/tmp/gainmaster_user_service_env_%i
 
 ExecStart=/usr/bin/bash -c "\
-    etcdctl set /vulcand/backends/gainmaster-user-service/servers/%i '{\"URL\": \"${SERVICE_ADDRESS}\"}'; \
-    etcdctl set /vulcand/backends/gainmaster-user-service/backend '{\"Type\": \"http\"}'; \
-    etcdctl set /vulcand/frontends/gainmaster-user-service/frontend '{\"Type\": \"http\", \"BackendId\": \"gainmaster-user-service\", \"Route\": \"Host(`api.${GAINMASTER_DOMAIN}`) && PathRegexp(`/users(.*)`)\"}';"
+    while true; do \
+        curl -f ${SERVICE_ADDRESS}; \
+        if [ $? -ne 7 ]; then \
+            etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/api/%i '{\"host\": \"http.service.${GAINMASTER_DOMAIN}\"}' --ttl 30; \
+            etcdctl set /vulcand/backends/gainmaster-user-service/servers/%i '{\"URL\": \"${SERVICE_ADDRESS}\"}' --ttl 30; \
+            etcdctl set /vulcand/backends/gainmaster-user-service/backend '{\"Type\": \"http\"}' --ttl 30; \
+            etcdctl set /vulcand/frontends/gainmaster-user-service/frontend '{\"Type\": \"http\", \"BackendId\": \"gainmaster-user-service\", \"Route\": \"Host(`api.${GAINMASTER_DOMAIN}`) && PathRegexp(`/users(.*)`)\"}' --ttl 30;
+        else \
+            etcdctl rm /vulcand/backends/gainmaster-user-service/servers/%i; \
+        fi; \
+        sleep 20; \
+    done"
 
 ExecStop=/bin/etcdctl rm /vulcand/backends/gainmaster-user-service/servers/%i
 
-ExecStopPost=/usr/bin/bash -c '\
-  SERVICE_INSTANCES=$(etcdctl ls /registrator/gainmaster-user-service | wc -l); \
-  if [ $SERVICE_INSTANCES -eq 0 ]; then \
-      etcdctl rm /vulcand/backends/gainmaster-user-service --recursive; \
-      etcdctl rm /vulcand/frontends/gainmaster-user-service --recursive; \
-      etcdctl rm /registrator/gainmaster-oauth-service --recursive; \
-  fi'
+ExecStop=/usr/bin/bash -c "\
+    etcdctl rm /vulcand/backends/gainmaster-user-service/servers/%i; \
+    rm /tmp/gainmaster_user_service_env_%i;"
 
 [X-Fleet]
 MachineOf=gainmaster-user-service@%i.service

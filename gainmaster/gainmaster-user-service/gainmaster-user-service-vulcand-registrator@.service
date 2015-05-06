@@ -19,7 +19,7 @@ ExecStart=/usr/bin/bash -c "\
             etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/api/%i '{\"host\": \"http.service.${GAINMASTER_DOMAIN}\"}' --ttl 30; \
             etcdctl set /vulcand/backends/gainmaster-user-service/servers/%i '{\"URL\": \"${SERVICE_ADDRESS}\"}' --ttl 30; \
             etcdctl set /vulcand/backends/gainmaster-user-service/backend '{\"Type\": \"http\"}' --ttl 30; \
-            etcdctl set /vulcand/frontends/gainmaster-user-service/frontend '{\"Type\": \"http\", \"BackendId\": \"gainmaster-user-service\", \"Route\": \"Host(`api.${GAINMASTER_DOMAIN}`) && PathRegexp(`/users(.*)`)\"}' --ttl 30;
+            etcdctl set /vulcand/frontends/gainmaster-user-service/frontend '{\"Type\": \"http\", \"BackendId\": \"gainmaster-user-service\", \"Route\": \"Host(`api.${GAINMASTER_DOMAIN}`) && PathRegexp(`/users(.*)`)\"}' --ttl 30; \
         else \
             etcdctl rm /vulcand/backends/gainmaster-user-service/servers/%i; \
         fi; \

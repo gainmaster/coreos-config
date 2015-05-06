@@ -7,16 +7,13 @@ After=etcd.service
 Requires=docker.service
 After=docker.service
 
-Requires=registrator.service
-After=registrator.service
-
 Requires=gainmaster-user-service-vulcand-registrator@%i.service
 Before=gainmaster-user-service-vulcand-registrator@%i.service
 
 [Service]
 TimeoutStartSec=0
 KillMode=none
-EnvironmentFile=/etc/metadata
+EnvironmentFile=/etc/coreos_metadata
 
 ExecStartPre=-/usr/bin/docker kill gainmaster-user-service
 ExecStartPre=-/usr/bin/docker rm gainmaster-user-service

@@ -8,7 +8,7 @@ BindsTo=gainmaster-user-service@%i.service
 After=gainmaster-user-service@%i.service
 
 [Service]
-EnvironmentFile=/etc/metadata
+EnvironmentFile=/etc/coreos_metadata
 EnvironmentFile=/etc/gainmaster_metadata
 EnvironmentFile=/tmp/gainmaster_user_service_env
 RemainAfterExit=yes

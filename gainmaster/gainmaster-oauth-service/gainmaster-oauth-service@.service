@@ -16,25 +16,25 @@ Before=gainmaster-oauth-service-vulcand-registrator@%i.service
 [Service]
 TimeoutStartSec=0
 KillMode=none
-EnvironmentFile=/etc/metadata
+EnvironmentFile=/etc/coreos_metadata
 
-ExecStartPre=-/usr/bin/docker kill gainmaster-oauth-service
-ExecStartPre=-/usr/bin/docker rm gainmaster-oauth-service
-ExecStartPre=/usr/bin/docker pull bachelorthesis/gainmaster-oauth-service
+ExecStartPre=-/usr/bin/docker kill gainmaster-oauth-service-%i
+ExecStartPre=-/usr/bin/docker rm gainmaster-oauth-service-%i
+ExecStartPre=/usr/bin/docker pull gainmaster/gainmaster-oauth-service
 
-ExecStart=/usr/bin/docker run --name gainmaster-oauth-service \
-  -p ${PRIVATE_IPV4}::8080 \
-  -e SERVICE_NAME=gainmaster-oauth-service \
-  -e SERVICE_ID=%i \
-  bachelorthesis/gainmaster-oauth-service
+ExecStart=/usr/bin/docker run --name gainmaster-oauth-service-%i \
+  --env SERVICE_NAME=gainmaster-oauth-service \
+  --env SERVICE_ID=%i \
+  --publish ${PRIVATE_IPV4}::8080 \
+  gainmaster/gainmaster-oauth-service
 
 ExecStartPost=/usr/bin/bash -c '\
   until (etcdctl get /registrator/gainmaster-oauth-service/%i); do \
     sleep 3; \
   done; \
-  echo SERVICE_ADDRESS=http://$(etcdctl get /registrator/gainmaster-oauth-service/%i) > /tmp/gainmaster_oauth_service_env'
+  echo SERVICE_ADDRESS=http://$(etcdctl get /registrator/gainmaster-user-service/%i) > /tmp/gainmaster_oauth_service_env_%i'
 
-ExecStop=/usr/bin/docker stop gainmaster-oauth-service
+ExecStop=/usr/bin/docker stop gainmaster-oauth-service-%i
 
 [X-Fleet]
 Conflicts=gainmaster-oauth-service@*.service

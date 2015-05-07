@@ -10,7 +10,7 @@ After=gainmaster-oauth-service@%i.service
 [Service]
 EnvironmentFile=/etc/coreos_metadata
 EnvironmentFile=/etc/gainmaster_metadata
-EnvironmentFile=/tmp/gainmaster_user_service_env_%i
+EnvironmentFile=/tmp/gainmaster_oauth_service_env_%i
 
 ExecStart=/usr/bin/bash -c "\
     while true; do \

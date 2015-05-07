@@ -32,7 +32,7 @@ ExecStartPost=/usr/bin/bash -c '\
   until (etcdctl get /registrator/gainmaster-oauth-service/%i); do \
     sleep 3; \
   done; \
-  echo SERVICE_ADDRESS=http://$(etcdctl get /registrator/gainmaster-user-service/%i) > /tmp/gainmaster_oauth_service_env_%i'
+  echo SERVICE_ADDRESS=http://$(etcdctl get /registrator/gainmaster-oauth-service/%i) > /tmp/gainmaster_oauth_service_env_%i'
 
 ExecStop=/usr/bin/docker stop gainmaster-oauth-service-%i
 

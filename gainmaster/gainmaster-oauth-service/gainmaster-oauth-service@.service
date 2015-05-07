@@ -7,9 +7,6 @@ After=etcd.service
 Requires=docker.service
 After=docker.service
 
-Requires=registrator.service
-After=registrator.service
-
 Requires=gainmaster-oauth-service-vulcand-registrator@%i.service
 Before=gainmaster-oauth-service-vulcand-registrator@%i.service
 

@@ -19,7 +19,8 @@ ExecStartPre=-/usr/bin/docker kill gainmaster-user-service-%i
 ExecStartPre=-/usr/bin/docker rm gainmaster-user-service-%i
 ExecStartPre=/usr/bin/docker pull gainmaster/gainmaster-user-service
 
-ExecStart=/usr/bin/docker run --name gainmaster-user-service-%i \
+ExecStart=/usr/bin/docker run --rm \
+  --name gainmaster-user-service-%i \
   --env SERVICE_NAME=gainmaster-user-service \
   --env SERVICE_ID=%i \
   --publish ${PRIVATE_IPV4}::8080 \

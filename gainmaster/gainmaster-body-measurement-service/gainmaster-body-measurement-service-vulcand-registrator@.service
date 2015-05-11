@@ -8,7 +8,8 @@ BindsTo=gainmaster-body-measurement-service@%i.service
 After=gainmaster-body-measurement-service@%i.service
 
 [Service]
-EnvironmentFile=/etc/metadata
+EnvironmentFile=/etc/coreos_metadata
+EnvironmentFile=/etc/gainmaster_metadata
 EnvironmentFile=/tmp/gainmaster_body_measurement_service_env_%i
 
 ExecStart=/usr/bin/bash -c "\

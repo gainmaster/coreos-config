@@ -35,7 +35,7 @@ ExecStartPost=/usr/bin/bash -c '\
   done; \
   echo SERVICE_ADDRESS=http://$(etcdctl get /registrator/gainmaster-body-measurement-service/%i) > /tmp/gainmaster_body_measurement_service_env_%i'
 
-ExecStop=/usr/bin/docker stop gainmaster-body-measurement-service
+ExecStop=/usr/bin/docker stop gainmaster-body-measurement-service-%i
 
 [X-Fleet]
 Conflicts=gainmaster-body-measurement-service@*.service

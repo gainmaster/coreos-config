@@ -22,7 +22,7 @@ ExecStart=/usr/bin/bash -c "\
                 '{ \
                     "Type": "http", \
                     "BackendId": "gainmaster-body-measurement-service", \
-                    "Route": \"Host(`api.${GAINMASTER_DOMAIN}`) && PathRegexp(`/users/(.*)/measurements(.*)`)" \
+                    "Route": \"Host(`api.${GAINMASTER_DOMAIN}`) && PathRegexp(`/users/(.*)/measurements(.*)`)\" \
                 }' --ttl 30; \
         else \
             etcdctl rm /vulcand/backends/gainmaster-body-measurement-service/servers/%i; \

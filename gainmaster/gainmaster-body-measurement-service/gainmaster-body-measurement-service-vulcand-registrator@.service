@@ -9,23 +9,31 @@ After=gainmaster-body-measurement-service@%i.service
 
 [Service]
 EnvironmentFile=/etc/metadata
-EnvironmentFile=/tmp/gainmaster_body_measurement_service_env
-RemainAfterExit=yes
+EnvironmentFile=/tmp/gainmaster_body_measurement_service_env_%i
 
-ExecStart=/usr/bin/etcdctl set /vulcand/backends/gainmaster-body-measurement-service/servers/%i '{"URL": "${SERVICE_ADDRESS}"}'
+ExecStart=/usr/bin/bash -c "\
+    while true; do \
+        curl -f ${SERVICE_ADDRESS}; \
+        if [ $? -ne 7 ]; then \
+            etcdctl set /vulcand/backends/gainmaster-user-service/servers/%i '{\"URL\": \"${SERVICE_ADDRESS}\"}' --ttl 30; \
+            etcdctl set /vulcand/backends/gainmaster-user-service/backend '{\"Type\": \"http\"}' --ttl 30; \
+            etcdctl set /vulcand/frontends/gainmaster-user-service/frontend \
+                '{ \
+                    "Type": "http", \
+                    "BackendId": "gainmaster-body-measurement-service", \
+                    "Route": \"Host(`api.${GAINMASTER_DOMAIN}`) && PathRegexp(`/users/(.*)/measurements(.*)`)" \
+                }' --ttl 30; \
+        else \
+            etcdctl rm /vulcand/backends/gainmaster-body-measurement-service/servers/%i; \
+        fi; \
+        sleep 20; \
+    done"
 
-ExecStartPost=/usr/bin/etcdctl set /vulcand/backends/gainmaster-body-measurement-service/backend '{"Type": "http"}'
-ExecStartPost=/usr/bin/etcdctl set /vulcand/frontends/gainmaster-body-measurement-service/frontend '{"Type": "http", "BackendId": "gainmaster-body-measurement-service", "Route": "Host(`api.hesjevik.im`) && PathRegexp(`/users(.*)/measurements(.*)`)"}'
+ExecStop=/bin/etcdctl rm /vulcand/backends/gainmaster-body-measurement-service/servers/%i
 
-ExecStop=/bin/etcdctl rm /vulcand/backends/gainmaster-body-measurement-service/servers/%i 
-
-ExecStopPost=/usr/bin/bash -c '\
-  SERVICE_INSTANCES=$(etcdctl ls /registrator/gainmaster-body-measurement-service | wc -l); \
-  if [ $SERVICE_INSTANCES -eq 0 ]; then \
-      etcdctl rm /vulcand/backends/gainmaster-body-measurement-service --recursive; \
-      etcdctl rm /vulcand/frontends/gainmaster-body-measurement-service --recursive; \
-      etcdctl rm /registrator/gainmaster-body-measurement-service --recursive; \
-  fi'
+ExecStop=/usr/bin/bash -c "\
+    etcdctl rm /vulcand/backends/gainmaster-user-service/servers/%i; \
+    rm /tmp/gainmaster_body_measurement_service_env_%i;"
 
 [X-Fleet]
 MachineOf=gainmaster-body-measurement-service@%i.service

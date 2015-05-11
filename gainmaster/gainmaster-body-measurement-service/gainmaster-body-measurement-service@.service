@@ -33,7 +33,7 @@ ExecStartPost=/usr/bin/bash -c '\
   until (etcdctl get /registrator/gainmaster-body-measurement-service/%i); do \
     sleep 3; \
   done; \
-  echo SERVICE_ADDRESS=http://$(etcdctl get /registrator/gainmaster-body-measurement-service/%i) > /tmp/gainmaster_body_measurement_service_env'
+  echo SERVICE_ADDRESS=http://$(etcdctl get /registrator/gainmaster-body-measurement-service/%i) > /tmp/gainmaster_body_measurement_service_env_%i'
 
 ExecStop=/usr/bin/docker stop gainmaster-body-measurement-service
 

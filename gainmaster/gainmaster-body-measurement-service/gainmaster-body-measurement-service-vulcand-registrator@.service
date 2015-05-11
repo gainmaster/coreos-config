@@ -15,9 +15,9 @@ ExecStart=/usr/bin/bash -c "\
     while true; do \
         curl -f ${SERVICE_ADDRESS}; \
         if [ $? -ne 7 ]; then \
-            etcdctl set /vulcand/backends/gainmaster-user-service/servers/%i '{\"URL\": \"${SERVICE_ADDRESS}\"}' --ttl 30; \
-            etcdctl set /vulcand/backends/gainmaster-user-service/backend '{\"Type\": \"http\"}' --ttl 30; \
-            etcdctl set /vulcand/frontends/gainmaster-user-service/frontend \
+            etcdctl set /vulcand/backends/gainmaster-body-measurement-service/servers/%i '{\"URL\": \"${SERVICE_ADDRESS}\"}' --ttl 30; \
+            etcdctl set /vulcand/backends/gainmaster-body-measurement-service/backend '{\"Type\": \"http\"}' --ttl 30; \
+            etcdctl set /vulcand/frontends/gainmaster-body-measurement-service/frontend \
                 '{ \
                     "Type": "http", \
                     "BackendId": "gainmaster-body-measurement-service", \

@@ -29,10 +29,8 @@ ExecStart=/usr/bin/bash -c "\
         sleep 20; \
     done"
 
-ExecStop=/bin/etcdctl rm /vulcand/backends/gainmaster-body-measurement-service/servers/%i
-
 ExecStop=/usr/bin/bash -c "\
-    etcdctl rm /vulcand/backends/gainmaster-user-service/servers/%i; \
+    etcdctl rm /vulcand/backends/gainmaster-body-measurement-service/servers/%i; \
     rm /tmp/gainmaster_body_measurement_service_env_%i;"
 
 [X-Fleet]

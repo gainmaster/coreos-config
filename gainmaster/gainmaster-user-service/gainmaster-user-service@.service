@@ -11,8 +11,11 @@ Requires=gainmaster-user-service-vulcand-registrator@%i.service
 Before=gainmaster-user-service-vulcand-registrator@%i.service
 
 [Service]
-TimeoutStartSec=0
+TimeoutStartSec=10m
 KillMode=none
+Restart=always
+RestartSec=10s
+
 EnvironmentFile=/etc/coreos_metadata
 
 ExecStartPre=-/usr/bin/docker kill gainmaster-user-service-%i

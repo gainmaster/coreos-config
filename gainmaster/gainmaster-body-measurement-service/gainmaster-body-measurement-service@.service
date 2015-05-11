@@ -7,26 +7,26 @@ After=etcd.service
 Requires=docker.service
 After=docker.service
 
-Requires=registrator.service
-After=registrator.service
-
 Requires=gainmaster-body-measurement-service-vulcand-registrator@%i.service
 Before=gainmaster-body-measurement-service-vulcand-registrator@%i.service
 
 [Service]
-TimeoutStartSec=0
+TimeoutStartSec=10m
 KillMode=none
-EnvironmentFile=/etc/metadata
+Restart=always
+RestartSec=10s
 
-ExecStartPre=-/usr/bin/docker kill gainmaster-body-measurement-service
-ExecStartPre=-/usr/bin/docker rm gainmaster-body-measurement-service
+EnvironmentFile=/etc/coreos_metadata
+
+ExecStartPre=-/usr/bin/docker kill gainmaster-body-measurement-service-%i
+ExecStartPre=-/usr/bin/docker rm gainmaster-body-measurement-service-%i
 ExecStartPre=/usr/bin/docker pull bachelorthesis/gainmaster-body-measurement-service
 
 ExecStart=/usr/bin/docker run --rm \
-  --name gainmaster-body-measurement-service \
-  -env SERVICE_NAME=gainmaster-body-measurement-service \
-  -env SERVICE_ID=%i \
-  -publish ${PRIVATE_IPV4}::8080 \
+  --name gainmaster-body-measurement-service-%i \
+  --env SERVICE_NAME=gainmaster-body-measurement-service \
+  --env SERVICE_ID=%i \
+  --publish ${PRIVATE_IPV4}::8080 \
   bachelorthesis/gainmaster-body-measurement-service
 
 ExecStartPost=/usr/bin/bash -c '\

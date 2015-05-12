@@ -16,12 +16,17 @@ ExecStart=/usr/bin/bash -c "\
     while true; do \
         curl -f ${SERVICE_ADDRESS}; \
         if [ $? -ne 7 ]; then \
-            etcdctl set /skydns/${GAINMASTER_SKYDNS_DOMAIN_PATH}/api/%i '{\"host\": \"http.service.${GAINMASTER_DOMAIN}\"}' --ttl 30; \
             etcdctl set /vulcand/backends/gainmaster-oauth-service/servers/%i '{\"URL\": \"${SERVICE_ADDRESS}\"}' --ttl 30; \
             etcdctl set /vulcand/backends/gainmaster-oauth-service/backend '{\"Type\": \"http\"}' --ttl 30; \
             etcdctl set /vulcand/frontends/gainmaster-oauth-service/frontend '{\"Type\": \"http\", \"BackendId\": \"gainmaster-oauth-service\", \"Route\": \"Host(`api.${GAINMASTER_DOMAIN}`) && PathRegexp(`/oauth(.*)`)\"}' --ttl 30; \
         else \
             etcdctl rm /vulcand/backends/gainmaster-oauth-service/servers/%i; \
+            SERVICE_INSTANCES=$(etcdctl ls /vulcand/backends/gainmaster-oauth-service/servers | wc -l); \
+            if [ $SERVICE_INSTANCES -eq 0 ]; then \
+                etcdctl rm /vulcand/frontends/gainmaster-oauth-service/frontend; \
+                etcdctl rm /vulcand/backends/gainmaster-oauth-service/backend; \
+                etcdctl rm /vulcand/backends/gainmaster-oauth-service/servers --recursive; \
+            fi; \
         fi; \
         sleep 20; \
     done"
@@ -34,3 +39,13 @@ ExecStop=/usr/bin/bash -c "\
 
 [X-Fleet]
 MachineOf=gainmaster-oauth-service@%i.service
+
+ExecStop=/usr/bin/bash -c "\
+    etcdctl rm /vulcand/backends/gainmaster-body-measurement-service/servers/%i; \
+    SERVICE_INSTANCES=$(etcdctl ls /vulcand/backends/gainmaster-oauth-service/servers | wc -l); \
+    if [ $SERVICE_INSTANCES -eq 0 ]; then \
+        etcdctl rm /vulcand/frontends/gainmaster-oauth-service/frontend; \
+        etcdctl rm /vulcand/backends/gainmaster-oauth-service/backend; \
+        etcdctl rm /vulcand/backends/gainmaster-oauth-service/servers --recursive; \
+    fi; \
+    rm /tmp/gainmaster_body_measurement_service_env_%i;"

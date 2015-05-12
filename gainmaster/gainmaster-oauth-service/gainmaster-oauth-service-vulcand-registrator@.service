@@ -23,9 +23,8 @@ ExecStart=/usr/bin/bash -c "\
             etcdctl rm /vulcand/backends/gainmaster-oauth-service/servers/%i; \
             SERVICE_INSTANCES=$(etcdctl ls /vulcand/backends/gainmaster-oauth-service/servers | wc -l); \
             if [ $SERVICE_INSTANCES -eq 0 ]; then \
-                etcdctl rm /vulcand/frontends/gainmaster-oauth-service/frontend; \
-                etcdctl rm /vulcand/backends/gainmaster-oauth-service/backend; \
-                etcdctl rm /vulcand/backends/gainmaster-oauth-service/servers --recursive; \
+                etcdctl rm /vulcand/frontends/gainmaster-oauth-service --recursive; \
+                etcdctl rm /vulcand/backends/gainmaster-oauth-service --recursive; \
             fi; \
         fi; \
         sleep 20; \
@@ -44,8 +43,7 @@ ExecStop=/usr/bin/bash -c "\
     etcdctl rm /vulcand/backends/gainmaster-body-measurement-service/servers/%i; \
     SERVICE_INSTANCES=$(etcdctl ls /vulcand/backends/gainmaster-oauth-service/servers | wc -l); \
     if [ $SERVICE_INSTANCES -eq 0 ]; then \
-        etcdctl rm /vulcand/frontends/gainmaster-oauth-service/frontend; \
-        etcdctl rm /vulcand/backends/gainmaster-oauth-service/backend; \
-        etcdctl rm /vulcand/backends/gainmaster-oauth-service/servers --recursive; \
+        etcdctl rm /vulcand/frontends/gainmaster-oauth-service --recursive; \
+        etcdctl rm /vulcand/backends/gainmaster-oauth-service --recursive; \
     fi; \
     rm /tmp/gainmaster_body_measurement_service_env_%i;"

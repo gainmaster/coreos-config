@@ -28,9 +28,8 @@ ExecStart=/usr/bin/bash -c "\
             etcdctl rm /vulcand/backends/gainmaster-user-service/servers/%i; \
             SERVICE_INSTANCES=$(etcdctl ls /vulcand/backends/gainmaster-user-service/servers | wc -l); \
             if [ $SERVICE_INSTANCES -eq 0 ]; then \
-                etcdctl rm /vulcand/frontends/gainmaster-user-service/frontend; \
-                etcdctl rm /vulcand/backends/gainmaster-user-service/backend; \
-                etcdctl rm /vulcand/backends/gainmaster-user-service/servers --recursive; \
+                etcdctl rm /vulcand/frontends/gainmaster-user-service --recursive; \
+                etcdctl rm /vulcand/backends/gainmaster-user-service --recursive; \
             fi; \
         fi; \
         sleep 20; \
@@ -40,9 +39,8 @@ ExecStop=/usr/bin/bash -c "\
     etcdctl rm /vulcand/backends/gainmaster-user-service/servers/%i; \
     SERVICE_INSTANCES=$(etcdctl ls /vulcand/backends/gainmaster-user-service/servers | wc -l); \
     if [ $SERVICE_INSTANCES -eq 0 ]; then \
-        etcdctl rm /vulcand/frontends/gainmaster-user-service/frontend; \
-        etcdctl rm /vulcand/backends/gainmaster-user-service/backend; \
-        etcdctl rm /vulcand/backends/gainmaster-user-service/servers --recursive; \
+        etcdctl rm /vulcand/frontends/gainmaster-user-service --recursive; \
+        etcdctl rm /vulcand/backends/gainmaster-user-service --recursive; \
     fi; \
     rm /tmp/gainmaster_user_service_env_%i;"
 

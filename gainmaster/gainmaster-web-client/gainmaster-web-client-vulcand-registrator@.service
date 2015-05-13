@@ -22,6 +22,11 @@ ExecStart=/usr/bin/bash -c "\
             etcdctl set /vulcand/backends/gainmaster-web-client/servers/%i '{\"URL\": \"${SERVICE_ADDRESS}\"}' --ttl 30; \
         else \
             etcdctl rm /vulcand/backends/gainmaster-web-client/servers/%i; \
+            SERVICE_INSTANCES=$(etcdctl ls /vulcand/backends/gainmaster-body-measurement-service/servers | wc -l); \
+            if [ $SERVICE_INSTANCES -eq 0 ]; then \
+                etcdctl rm /vulcand/frontends/gainmaster-web-client --recursive; \
+                etcdctl rm /vulcand/backends/gainmaster-web-client --recursive; \
+            fi; \
         fi; \
         sleep 20; \
     done"
@@ -29,6 +34,13 @@ ExecStart=/usr/bin/bash -c "\
 ExecStop=/usr/bin/bash -c "\
     etcdctl rm /vulcand/backends/gainmaster-web-client/servers/%i; \
     rm /tmp/gainmaster_web_client_env_%i"
+
+ExecStopPost=-/usr/bin/bash -c "\
+    SERVICE_INSTANCES=$(etcdctl ls /vulcand/backends/gainmaster-body-measurement-service/servers | wc -l); \
+    if [ $SERVICE_INSTANCES -eq 0 ]; then \
+        etcdctl rm /vulcand/frontends/gainmaster-web-client --recursive; \
+        etcdctl rm /vulcand/backends/gainmaster-web-client --recursive; \
+    fi; \
 
 [X-Fleet]
 MachineOf=gainmaster-web-client@%i.service

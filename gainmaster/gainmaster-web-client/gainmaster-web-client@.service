@@ -8,8 +8,8 @@ Requires=docker.service
 After=docker.service
 
 ## DIS
-Requires=gainmaster-web-client-registrator@%i.service
-Before=gainmaster-web-client-registrator@%i.service
+Requires=gainmaster-web-client-vulcand-registrator@%i.service
+Before=gainmaster-web-client-vulcand-registrator@%i.service
 
 [Service]
 TimeoutStartSec=10m

@@ -20,14 +20,14 @@ EnvironmentFile=/etc/coreos_metadata
 
 ExecStartPre=-/usr/bin/docker kill gainmaster-body-measurement-service-%i
 ExecStartPre=-/usr/bin/docker rm gainmaster-body-measurement-service-%i
-ExecStartPre=/usr/bin/docker pull bachelorthesis/gainmaster-body-measurement-service
+ExecStartPre=/usr/bin/docker pull gainmaster/gainmaster-body-measurement-service
 
 ExecStart=/usr/bin/docker run --rm \
   --name gainmaster-body-measurement-service-%i \
   --env SERVICE_NAME=gainmaster-body-measurement-service \
   --env SERVICE_ID=%i \
   --publish ${PRIVATE_IPV4}::8080 \
-  bachelorthesis/gainmaster-body-measurement-service
+  gainmaster/gainmaster-body-measurement-service
 
 ExecStartPost=/usr/bin/bash -c '\
   until (etcdctl get /registrator/gainmaster-body-measurement-service/%i); do \
